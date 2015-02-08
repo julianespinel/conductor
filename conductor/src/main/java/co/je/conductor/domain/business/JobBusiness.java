@@ -50,7 +50,16 @@ public class JobBusiness {
 
 		try {
 
-			either = jobRequestDAO.createJobRequest(mongoDB, jobRequest);
+			either = jobRequestDAO.createJobRequest(mongoDB, correctedJobRequest);
+			
+			if (either.isRight()) {
+			    
+			    String createdJobRequestID = either.right().value();
+                correctedJobRequest = new JobRequest(createdJobRequestID, correctedJobRequest);
+                
+	            JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, payloadList);
+	            jobExecutor.run();
+			}
 
 		} catch (Exception e) {
 
@@ -58,9 +67,6 @@ public class JobBusiness {
 			TechnicalException technicalException = new TechnicalException(e.getMessage());
 			either = Either.left(technicalException);
 		}
-		
-		JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, payloadList);
-		jobExecutor.run();
 
 		return either;
 	}
