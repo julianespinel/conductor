@@ -2,14 +2,27 @@ package co.je.conductor.domain.entities;
 
 import java.util.Map;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class HttpRequestSpecs {
 	
+	@NotEmpty
 	private final String httpMethod;
-	private final String url;
-	private final Map<String, String> httpHeaders;
-	private final String httpPayload;
 	
-	public HttpRequestSpecs(String httpMethod, String url, Map<String, String> httpHeaders, String httpPayload) {
+	@NotEmpty
+	private final String url;
+	
+	private final Map<String, String> httpHeaders;
+	private final JsonNode httpPayload;
+	
+	@JsonCreator
+	public HttpRequestSpecs(@JsonProperty("httpMethod") String httpMethod, @JsonProperty("url") String url, 
+	        @JsonProperty("httpHeaders") Map<String, String> httpHeaders, 
+	        @JsonProperty("httpPayload") JsonNode httpPayload) {
 		
 		this.httpMethod = httpMethod;
 		this.url = url;
@@ -29,7 +42,7 @@ public class HttpRequestSpecs {
 		return httpHeaders;
 	}
 
-	public String getHttpPayload() {
+	public JsonNode getHttpPayload() {
 		return httpPayload;
 	}
 }

@@ -1,17 +1,15 @@
 package co.je.conductor.infrastructure.utils.json;
 
-import org.joda.time.DateTime;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JSONUtils {
-	
-	public static Gson getGsonAbleToParseDateTime() {
 
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeTypeConverter());
-
-		return gsonBuilder.create();
-	}
+    public static Map<String, Object> createKeyValueStringJson(String key, Object value) {
+        
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(key, value);
+        
+        return map;
+    }
 }
