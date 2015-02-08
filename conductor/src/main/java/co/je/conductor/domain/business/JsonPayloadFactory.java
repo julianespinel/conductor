@@ -79,11 +79,6 @@ public class JsonPayloadFactory {
 				payloadList.add(modifiedJsonPayload);
 			}
 		}
-		
-		System.out.println();
-		System.out.println("payloadList");
-		System.out.println(payloadList);
-		System.out.println();
 
 		return payloadList;
 	}

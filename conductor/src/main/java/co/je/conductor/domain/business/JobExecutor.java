@@ -2,7 +2,6 @@ package co.je.conductor.domain.business;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -20,7 +19,7 @@ import co.je.conductor.persistence.daos.JobResultDAO;
 import com.mongodb.DB;
 
 public class JobExecutor implements Runnable {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JobExecutor.class);
 
     private final DB mongoDB;
@@ -70,13 +69,19 @@ public class JobExecutor implements Runnable {
         return httpResponseList;
     }
 
-    private List<HttpResponse> resolveFutures(List<Future<HttpResponse>> futuresList) throws InterruptedException,
-            ExecutionException {
+    private List<HttpResponse> resolveFutures(List<Future<HttpResponse>> futuresList) {
 
         List<HttpResponse> httpResponsesList = new ArrayList<HttpResponse>();
 
         for (Future<HttpResponse> future : futuresList) {
-            httpResponsesList.add(future.get());
+
+            try {
+                httpResponsesList.add(future.get());
+
+            } catch (Exception e) {
+
+                LOGGER.error("resolveFutures: " + e.getMessage());
+            }
         }
 
         return httpResponsesList;
@@ -85,35 +90,39 @@ public class JobExecutor implements Runnable {
     @Override
     public void run() {
 
+        LOGGER.info("running jobRequest: " + jobRequest.getId());
+
+        ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
+
+        int totalCalls = concurrencySpecs.getTotalCalls();
+        int concurrentCalls = concurrencySpecs.getConcurrentCalls();
+        ExecutorService threadPool = Executors.newFixedThreadPool(concurrentCalls);
+
+        LOGGER.info("threadPool created, size: " + concurrentCalls);
+
         try {
-            
-            LOGGER.info("running jobRequest: " + jobRequest.getId());
-
-            ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
-
-            int totalCalls = concurrencySpecs.getTotalCalls();
-            int concurrentCalls = concurrencySpecs.getConcurrentCalls();
-            ExecutorService threadPool = Executors.newFixedThreadPool(concurrentCalls);
-            
-            LOGGER.info("threadPool created, size: " + concurrentCalls);
 
             HttpRequestSpecs httpRequestSpecs = jobRequest.getHttpRequestSpecs();
             List<JobExecutorWorker> workers = createJobWorkers(totalCalls, httpRequestSpecs, payloadList);
             List<Future<HttpResponse>> futuresList = executeJobInParallel(threadPool, workers);
-            
+
             LOGGER.info("workers created and jobs is being executed.");
 
             String jobRequestID = jobRequest.getId();
             List<HttpResponse> httpResponsesList = resolveFutures(futuresList);
             JobResult jobResult = new JobResult(jobRequestID, httpResponsesList);
             jobResultDAO.saveJobResult(mongoDB, jobResult);
-            
+
             LOGGER.info("saved jobResult of the jobRequest: " + jobRequestID);
 
         } catch (Exception e) {
 
             e.printStackTrace();
             LOGGER.error(e.getMessage());
+
+        } finally {
+
+            threadPool.shutdown();
         }
     }
 }
