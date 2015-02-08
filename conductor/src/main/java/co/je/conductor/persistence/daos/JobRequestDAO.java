@@ -1,6 +1,8 @@
 package co.je.conductor.persistence.daos;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.infrastructure.exceptions.IException;
@@ -17,6 +19,8 @@ import fj.data.Either;
 public class JobRequestDAO {
 
     public static final String JOBS_REQUESTS_COLLECTION = "jobs_requests";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobRequestDAO.class);
 
     private final ObjectMapper objectMapper;
 
@@ -41,6 +45,8 @@ public class JobRequestDAO {
             jobRequestDBO.put("id", objectId);
             collection.insert(jobRequestDBO);
             either = Either.right(objectId.toString());
+            
+            LOGGER.info("createJobRequest: " + objectId);
 
         } catch (Exception e) {
 

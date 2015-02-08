@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.http.HttpResponse;
-
-import com.mongodb.DB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import co.je.conductor.domain.entities.ConcurrencySpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
@@ -17,7 +17,11 @@ import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.domain.entities.JobResult;
 import co.je.conductor.persistence.daos.JobResultDAO;
 
+import com.mongodb.DB;
+
 public class JobExecutor implements Runnable {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobExecutor.class);
 
     private final DB mongoDB;
     private final JobResultDAO jobResultDAO;
@@ -82,26 +86,34 @@ public class JobExecutor implements Runnable {
     public void run() {
 
         try {
+            
+            LOGGER.info("running jobRequest: " + jobRequest.getId());
 
             ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
 
             int totalCalls = concurrencySpecs.getTotalCalls();
             int concurrentCalls = concurrencySpecs.getConcurrentCalls();
             ExecutorService threadPool = Executors.newFixedThreadPool(concurrentCalls);
+            
+            LOGGER.info("threadPool created, size: " + concurrentCalls);
 
             HttpRequestSpecs httpRequestSpecs = jobRequest.getHttpRequestSpecs();
-
             List<JobExecutorWorker> workers = createJobWorkers(totalCalls, httpRequestSpecs, payloadList);
             List<Future<HttpResponse>> futuresList = executeJobInParallel(threadPool, workers);
+            
+            LOGGER.info("workers created and jobs is being executed.");
 
             String jobRequestID = jobRequest.getId();
             List<HttpResponse> httpResponsesList = resolveFutures(futuresList);
             JobResult jobResult = new JobResult(jobRequestID, httpResponsesList);
             jobResultDAO.saveJobResult(mongoDB, jobResult);
+            
+            LOGGER.info("saved jobResult of the jobRequest: " + jobRequestID);
 
         } catch (Exception e) {
 
             e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 }

@@ -22,6 +22,15 @@ public class JobRequest {
 		this.httpRequestSpecs = httpRequestSpecs;
 		this.payloadKeysToIterate = payloadKeysToIterate;
 	}
+	
+	public JobRequest(String id, JobRequest jobRequest) {
+	    
+	    this.id = id;
+	    this.creatorEmail = jobRequest.getCreatorEmail();
+        this.concurrencySpecs = jobRequest.getConcurrencySpecs();
+        this.httpRequestSpecs = jobRequest.getHttpRequestSpecs();
+        this.payloadKeysToIterate = jobRequest.getPayloadKeysToIterate();
+    }
 
 	@JsonCreator
 	public JobRequest(@JsonProperty("creatorEmail") String creatorEmail, 

@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
@@ -14,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -22,8 +25,6 @@ import org.apache.http.util.EntityUtils;
 import org.eclipse.jetty.http.HttpMethod;
 
 import co.je.conductor.domain.entities.HttpRequestSpecs;
-
-import com.google.common.base.Charsets;
 
 public class JobExecutorWorker implements Callable<HttpResponse> {
 
@@ -50,18 +51,28 @@ public class JobExecutorWorker implements Callable<HttpResponse> {
 		// Add http headers to the request
 		Map<String, String> httpHeaders = httpRequestSpecs.getHttpHeaders();
 		Iterator<String> keysIterator = httpHeaders.keySet().iterator();
+		
+		if (httpHeaders.isEmpty()) {
+		    
+		    // Add Accept and ContentType headers as application/json by default.
+		    httpRequest.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString());
+		    httpRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+		    
+		} else {
+		    
+		    while (keysIterator.hasNext()) {
 
-		while (keysIterator.hasNext()) {
-
-			String headerKey = keysIterator.next();
-			String headerValue = httpHeaders.get(headerKey);
-			httpRequest.setHeader(headerKey, headerValue);
+	            String headerKey = keysIterator.next();
+	            String headerValue = httpHeaders.get(headerKey);
+	            httpRequest.setHeader(headerKey, headerValue);
+	        }
 		}
 	}
 
 	private void addPayload(HttpEntityEnclosingRequest httpRequest) {
 
-		StringEntity payloadEntity = new StringEntity(payload, Charsets.UTF_8);
+	    // ContentType.APPLICATION_JSON = "application/json" and "UTF-8". See source.
+		StringEntity payloadEntity = new StringEntity(payload, ContentType.APPLICATION_JSON);
 		httpRequest.setEntity(payloadEntity);
 	}
 

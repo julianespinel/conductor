@@ -18,7 +18,6 @@ public class JsonPayloadFactory {
 		
 		if (nestedKeys.length() > 1) {
 			
-//			JsonObject childJson = parentJson.getAsJsonObject(nestedKeys.head());
 		    JsonNode childJson = parentJson.get(nestedKeys.head());
 			leafJsonNode = getLeafJsonNode(childJson, nestedKeys.tail());
 			
@@ -40,14 +39,12 @@ public class JsonPayloadFactory {
 			String[] keysArray = key.split("\\.");
 			fj.data.List<String> nestedKeys = fj.data.List.list(keysArray);
 			
-//			JsonObject leafJsonObject = getLeafJsonNode(httpPayload, nestedKeys);
 			JsonNode leafJsonNode = getLeafJsonNode(httpPayload, nestedKeys);
 			
-//			String value = leafJsonObject.get(nestedKeys.last()).getAsString();
 			String keyToChange = nestedKeys.last();
             String value = leafJsonNode.get(keyToChange).asText();
 			String modifiedValue = value + index;
-//			leafJsonObject.addProperty(nestedKeys.last(), modifiedValue);
+			
 			ObjectNode objectNode = (ObjectNode) leafJsonNode;
 			objectNode.put(keyToChange, modifiedValue);
 			
@@ -82,6 +79,11 @@ public class JsonPayloadFactory {
 				payloadList.add(modifiedJsonPayload);
 			}
 		}
+		
+		System.out.println();
+		System.out.println("payloadList");
+		System.out.println(payloadList);
+		System.out.println();
 
 		return payloadList;
 	}
