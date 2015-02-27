@@ -26,4 +26,10 @@ public class TechnicalException implements IException {
 		
 		return message;
 	}
+	
+	@Override
+    public boolean isBusinessException() {
+        
+        return (type.equalsIgnoreCase(ExceptionTypes.BUSINESS.getName()));
+    }
 }

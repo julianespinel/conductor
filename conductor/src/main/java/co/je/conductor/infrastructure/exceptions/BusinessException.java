@@ -26,4 +26,10 @@ public class BusinessException implements IException {
 		
 		return message;
 	}
+
+    @Override
+    public boolean isBusinessException() {
+        
+        return (type.equalsIgnoreCase(ExceptionTypes.BUSINESS.getName()));
+    }
 }

@@ -10,22 +10,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class JobResult {
 
 	private final String id;
-	private final String jobRequestID;
+	private final String jobRequestId;
 	private final List<HttpResponse> httpResponsesList;
 
 	@JsonCreator
-	public JobResult(@JsonProperty("id") String id, @JsonProperty("jobRequestID") String jobRequestID, 
+	public JobResult(@JsonProperty("id") String id, @JsonProperty("jobRequestId") String jobRequestId, 
 			@JsonProperty("httpResponsesList") List<HttpResponse> httpResponsesList) {
 
 		this.id = id;
-		this.jobRequestID = jobRequestID;
+		this.jobRequestId = jobRequestId;
 		this.httpResponsesList = httpResponsesList;
 	}
 
-	public JobResult(String jobRequestID, List<HttpResponse> httpResponsesList) {
+	public JobResult(String jobRequestId, List<HttpResponse> httpResponsesList) {
 
 		this.id = "0";
-		this.jobRequestID = jobRequestID;
+		this.jobRequestId = jobRequestId;
 		this.httpResponsesList = httpResponsesList;
 	}
 
@@ -33,8 +33,8 @@ public class JobResult {
 		return id;
 	}
 
-	public String getJobRequestID() {
-		return jobRequestID;
+	public String getJobRequestId() {
+		return jobRequestId;
 	}
 
 	public List<HttpResponse> getHttpResponsesList() {

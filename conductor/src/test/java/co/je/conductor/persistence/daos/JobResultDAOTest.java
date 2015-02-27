@@ -10,9 +10,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import co.je.conductor.domain.entities.JobRequest;
+import co.je.conductor.domain.entities.JobResult;
 import co.je.conductor.infrastructure.exceptions.IException;
-import co.je.conductor.utils.JobRequestFactoryForTests;
+import co.je.conductor.utils.JobResultFactoryForTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -20,16 +20,16 @@ import com.mongodb.MongoClient;
 
 import fj.data.Either;
 
-public class JobRequestDAOTest {
-
+public class JobResultDAOTest {
+    
     private final static String TEST_DB = "conductor_test_db";
 
     private static MongoClient mongoClient;
     private static DB mongoDB;
     
     private ObjectMapper objectMapper;
-    private JobRequestDAO jobRequestDAO;
-
+    private JobResultDAO jobResultDAO;
+    
     @BeforeClass
     public static void setUpClass() {
 
@@ -52,45 +52,46 @@ public class JobRequestDAOTest {
         mongoDB = null;
         mongoClient = null;
     }
-
+    
     @Before
     public void setUp() {
 
         objectMapper = new ObjectMapper();
-        jobRequestDAO = new JobRequestDAO(objectMapper);
+        jobResultDAO = new JobResultDAO(objectMapper);
     }
 
     @After
     public void tearDown() {
 
-        jobRequestDAO = null;
+        jobResultDAO = null;
         objectMapper = null;
-        mongoDB.getCollection(JobRequestDAO.JOBS_REQUESTS_COLLECTION).drop();
+        mongoDB.getCollection(JobResultDAO.JOBS_RESULTS_COLLECTION).drop();
     }
 
     @Test
-    public void testCreateJobRequest_OK() {
+    public void testSaveJobResult_OK() {
         
-        JobRequest jobRequest = JobRequestFactoryForTests.getJobRequest();
-        Either<IException, String> either = jobRequestDAO.createJobRequest(mongoDB, jobRequest);
+        int listSize = 5;
+        JobResult jobResult = JobResultFactoryForTests.getJobResult(listSize);
+        Either<IException, String> jobResultIdEither = jobResultDAO.saveJobResult(mongoDB, jobResult);
         
-        assertNotNull(either);
-        assertEquals(true, either.isRight());
+        assertNotNull(jobResultIdEither);
+        assertEquals(true, jobResultIdEither.isRight());
         
-        String requestId = either.right().value();
-        assertEquals(false, StringUtils.isBlank(requestId));
+        String jobResultId = jobResultIdEither.right().value();
+        assertEquals(false, StringUtils.isBlank(jobResultId));
     }
     
     @Test
-    public void testCreateJobRequest_NOK() {
+    public void testSaveJobResult_NOK() {
         
-        JobRequest nullJobRequest = null;
-        Either<IException, String> jobRequestIdeither = jobRequestDAO.createJobRequest(mongoDB, nullJobRequest);
+        JobResult nullJobResult = null;
+        Either<IException, String> jobResultIdEither = jobResultDAO.saveJobResult(mongoDB, nullJobResult);
         
-        assertNotNull(jobRequestIdeither);
-        assertEquals(false, jobRequestIdeither.isRight());
+        assertNotNull(jobResultIdEither);
+        assertEquals(false, jobResultIdEither.isRight());
         
-        IException exception = jobRequestIdeither.left().value();
+        IException exception = jobResultIdEither.left().value();
         assertEquals(false, exception.isBusinessException());
     }
 }
