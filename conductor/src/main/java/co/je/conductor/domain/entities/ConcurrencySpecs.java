@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ConcurrencySpecs {
+public class ConcurrencySpecs implements Comparable<ConcurrencySpecs> {
 	
 	@NotEmpty
 	private final int totalCalls;
@@ -28,4 +28,15 @@ public class ConcurrencySpecs {
 	public int getConcurrentCalls() {
 		return concurrentCalls;
 	}
+
+    @Override
+    public int compareTo(ConcurrencySpecs concurrencySpecs) {
+        
+        int answer = 0;
+        
+        answer += (totalCalls == concurrencySpecs.getTotalCalls()) ? 0 : 1;
+        answer += (concurrentCalls == concurrencySpecs.getConcurrentCalls()) ? 0 : 1;
+        
+        return answer;
+    }
 }
