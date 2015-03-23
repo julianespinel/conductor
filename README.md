@@ -133,7 +133,78 @@ As you can see a JobRequest is composed of 4 main parts:
     
     How does Conductor modify those values? Currently we only get the original values and append a number to them. This will change in upcoming versions. We will identify data types (strings, numbers, booleans, etc) and make modifications that are more appropriate for each type.
 
+## API
 
-## Example
+We offer an API with one REST service to create load tests. We will evolve this API in further versions in order to be able to automate load tests creation, management and reporting.
 
+1. Create job request
 
+<pre>
+HTTP method: POST
+URL:  http://localhost:9001/conductor/api/jobs
+Payload: job request json
+</pre>
+
+### Examples
+
+#### GET and DELETE requests
+
+HTTP method: `POST`
+
+URL:  `http://localhost:9001/conductor/api/jobs`
+
+Payload:
+
+```json
+{
+    "creatorEmail": "julianespinel@gmail.com",
+    "concurrencySpecs": {
+        "totalCalls": 10,
+        "concurrentCalls": 5
+    },
+    "httpRequestSpecs": {
+        "httpMethod": "GET",
+        "url": "http://104.131.6.14:4001/services",
+        "httpHeaders": {
+            "Authorization": "tkn123"
+        }
+    }
+}
+```
+
+#### POST and PUT requests
+
+HTTP method: `POST`
+
+URL:  `http://localhost:9001/conductor/api/jobs`
+
+Payload:
+
+```json
+{
+    "creatorEmail": "julianespinel@gmail.com",
+    "concurrencySpecs": {
+        "totalCalls": 10,
+        "concurrentCalls": 5
+    },
+    "httpRequestSpecs": {
+        "httpMethod": "POST",
+        "url": "http://104.131.6.14:4001/services",
+        "httpHeaders": {
+            "Authorization": "tkn123"
+        },
+        "httpPayload": {
+            "serviceName": "auth",
+            "host": "104.131.6.14",
+            "port": "8000",
+            "protocol": "http",
+            "prefix": "auth"
+        }
+    },
+    "payloadKeysToModify": [
+        "serviceName",
+        "port",
+        "prefix"
+    ]
+}
+```
