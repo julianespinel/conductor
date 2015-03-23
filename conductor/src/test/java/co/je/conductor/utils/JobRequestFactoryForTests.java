@@ -15,8 +15,8 @@ public class JobRequestFactoryForTests {
 
         ConcurrencySpecs concurrencySpecs = ConcurrencySpecsFactoryForTests.getConcurrencySpecs();
         HttpRequestSpecs httpRequestSpecs = HttpRequestSpecsFactoryForTests.getHttpRequestSpecs();
-        List<String> payloadKeysToIterate = HttpRequestSpecsFactoryForTests.getPayloadKeysToIterate();
+        List<String> payloadKeysToModify = HttpRequestSpecsFactoryForTests.getPayloadKeysToModify();
 
-        return new JobRequest(id, creatorEmail, concurrencySpecs, httpRequestSpecs, payloadKeysToIterate);
+        return new JobRequest(id, creatorEmail, concurrencySpecs, httpRequestSpecs, payloadKeysToModify);
     }
 }

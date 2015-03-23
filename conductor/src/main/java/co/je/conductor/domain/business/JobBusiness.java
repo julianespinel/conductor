@@ -36,9 +36,9 @@ public class JobBusiness {
 		ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
 
 		HttpRequestSpecs httpRequestSpecs = jobRequest.getHttpRequestSpecs();
-		List<String> payloadKeysToIterate = jobRequest.getPayloadKeysToIterate();
+		List<String> payloadKeysToModify = jobRequest.getPayloadKeysToModify();
 
-		return new JobRequest(creatorEmail, correctedConcurrencySpecs, httpRequestSpecs, payloadKeysToIterate);
+		return new JobRequest(creatorEmail, correctedConcurrencySpecs, httpRequestSpecs, payloadKeysToModify);
 	}
 
 	public Either<IException, String> createJobRequest(JobRequest jobRequest) {

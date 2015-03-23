@@ -59,14 +59,14 @@ public class HttpRequestSpecsFactoryForTests {
         return httpRequestSpecs;
     }
     
-    public static List<String> getPayloadKeysToIterate() {
+    public static List<String> getPayloadKeysToModify() {
 
-        List<String> payloadKeysToIterate = new ArrayList<String>();
-        payloadKeysToIterate.add("id");
-        payloadKeysToIterate.add("username");
-        payloadKeysToIterate.add("location.city");
-        payloadKeysToIterate.add("location.address.number");
+        List<String> payloadKeysToModify = new ArrayList<String>();
+        payloadKeysToModify.add("id");
+        payloadKeysToModify.add("username");
+        payloadKeysToModify.add("location.city");
+        payloadKeysToModify.add("location.address.number");
 
-        return payloadKeysToIterate;
+        return payloadKeysToModify;
     }
 }
