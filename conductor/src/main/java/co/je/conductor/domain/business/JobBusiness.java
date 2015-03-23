@@ -31,7 +31,7 @@ public class JobBusiness {
 
 		String creatorEmail = jobRequest.getCreatorEmail();
 
-		// Correct concurrency specifications.
+		// Correct concurrency specification.
 		ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
 		ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
 
