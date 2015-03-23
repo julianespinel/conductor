@@ -11,9 +11,10 @@ The main objective of Conductor is to execute load tests against REST APIs.
 ## How to install
 
 1. Make a git clone of this repository: `git clone https://github.com/julianespinel/conductor.git`
-1. Go to the following directory: conductor -> scripts
+1. Go to the following directory: conductor/scripts
 1. Execute the script named: build-and-run.sh (It will start a new process using the port 9001)
-1. Test the service is alive making a get request to `http://localhost:9001/conductor/admin/ping`
+1. Test the service is alive making a GET request to `http://localhost:9001/conductor/admin/ping`
+1. If you get "pong" as response that means Conductor is up and running
 
 ## How to use
 
