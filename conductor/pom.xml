@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.je</groupId>
 	<artifactId>conductor</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>conductor</name>
 	<description>A load testing tool inspired by orchestra conductors</description>
 
