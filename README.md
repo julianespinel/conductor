@@ -149,11 +149,11 @@ Payload: job request json
 
 #### GET and DELETE requests
 
-HTTP method: `POST`
-
-URL:  `http://localhost:9001/conductor/api/jobs`
-
+<pre>
+HTTP method: POST
+URL: http://localhost:9001/conductor/api/jobs
 Payload:
+</pre>
 
 ```json
 {
@@ -174,11 +174,11 @@ Payload:
 
 #### POST and PUT requests
 
-HTTP method: `POST`
-
-URL:  `http://localhost:9001/conductor/api/jobs`
-
+<pre>
+HTTP method: POST
+URL: http://localhost:9001/conductor/api/jobs
 Payload:
+</pre>
 
 ```json
 {
