@@ -41,7 +41,7 @@ In order to execute a load test, you should define a job request. A job request 
             "prefix": "auth"
         }
     },
-    "payloadKeysToIterate": [
+    "payloadKeysToModify": [
         "serviceName",
         "port",
         "prefix"
@@ -75,11 +75,11 @@ As you can see a JobRequest is composed of 4 main parts:
     
     It is important to note that if no `httpHeaders` are provided, the system will add `Accept` and `ContentType` headers with value `application/json` by default.
 
-1. payloadKeysToIterate
+1. payloadKeysToModify
 
 	If we are testing a service that creates an object into a DB (for example), we can't send the same payload in each HTTP request because probably the service will tell us that the object is already created. For this reason is imporant that Conductor generates a different HTTP payload for each request. How do we tell Conductor to do it?
 	
-    In "payloadKeysToIterate" we should define an array that references the keys of the "httpPayload" we want to change on each request. In the example above the array was: 
+    In "payloadKeysToModify" we should define an array that references the keys of the "httpPayload" we want to change on each request. In the example above the array was: 
     
     ```json
     [
@@ -129,7 +129,7 @@ As you can see a JobRequest is composed of 4 main parts:
     
     And so on until the last call.
     
-    As you can see all the generated payloads are the same except for the values of the keys referenced in the "payloadKeysToIterate" array: "serviceName", "port" and "prefix". 
+    As you can see all the generated payloads are the same except for the values of the keys referenced in the "payloadKeysToModify" array: "serviceName", "port" and "prefix". 
     
     How does Conductor modify those values? Currently we only get the original values and append a number to them. This will change in upcoming versions. We will identify data types (strings, numbers, booleans, etc) and make modifications that are more appropriate for each type.
 

@@ -23,19 +23,19 @@ public class JsonPayloadFactoryTest {
         int totalCalls = 10;
         assertEquals(totalCalls, jobRequest.getConcurrencySpecs().getTotalCalls());
         
-        int numberOfPayloadKeysToIterate = 4;
-        List<String> payloadKeysToIterate = jobRequest.getPayloadKeysToIterate();
-        assertEquals(numberOfPayloadKeysToIterate, payloadKeysToIterate.size());
+        int numberOfPayloadKeysToModify = 4;
+        List<String> payloadKeysToModify = jobRequest.getPayloadKeysToModify();
+        assertEquals(numberOfPayloadKeysToModify, payloadKeysToModify.size());
         
         String idKey = "id";
         String usernameKey = "username";
         String cityKey = "location.city";
         String addressNumberKey = "location.address.number";
         
-        assertEquals(idKey, payloadKeysToIterate.get(0));
-        assertEquals(usernameKey, payloadKeysToIterate.get(1));
-        assertEquals(cityKey, payloadKeysToIterate.get(2));
-        assertEquals(addressNumberKey, payloadKeysToIterate.get(3));
+        assertEquals(idKey, payloadKeysToModify.get(0));
+        assertEquals(usernameKey, payloadKeysToModify.get(1));
+        assertEquals(cityKey, payloadKeysToModify.get(2));
+        assertEquals(addressNumberKey, payloadKeysToModify.get(3));
         
         List<String> generatedPayloadList = JsonPayloadFactory.generatePayloadList(jobRequest);
         

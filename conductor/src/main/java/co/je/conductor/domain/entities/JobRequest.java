@@ -11,16 +11,16 @@ public class JobRequest {
 	private final String creatorEmail;
 	private final ConcurrencySpecs concurrencySpecs;
 	private final HttpRequestSpecs httpRequestSpecs;
-	private final List<String> payloadKeysToIterate;
+	private final List<String> payloadKeysToModify;
 
 	public JobRequest(String id, String creatorEmail, ConcurrencySpecs concurrencySpecs, 
-	        HttpRequestSpecs httpRequestSpecs, List<String> payloadKeysToIterate) {
+	        HttpRequestSpecs httpRequestSpecs, List<String> payloadKeysToModify) {
 
 		this.id = id;
 		this.creatorEmail = creatorEmail;
 		this.concurrencySpecs = concurrencySpecs;
 		this.httpRequestSpecs = httpRequestSpecs;
-		this.payloadKeysToIterate = payloadKeysToIterate;
+		this.payloadKeysToModify = payloadKeysToModify;
 	}
 	
 	public JobRequest(String id, JobRequest jobRequest) {
@@ -29,20 +29,20 @@ public class JobRequest {
 	    this.creatorEmail = jobRequest.getCreatorEmail();
         this.concurrencySpecs = jobRequest.getConcurrencySpecs();
         this.httpRequestSpecs = jobRequest.getHttpRequestSpecs();
-        this.payloadKeysToIterate = jobRequest.getPayloadKeysToIterate();
+        this.payloadKeysToModify = jobRequest.getPayloadKeysToModify();
     }
 
 	@JsonCreator
 	public JobRequest(@JsonProperty("creatorEmail") String creatorEmail, 
             @JsonProperty("concurrencySpecs") ConcurrencySpecs concurrencySpecs, 
             @JsonProperty("httpRequestSpecs") HttpRequestSpecs httpRequestSpecs,
-            @JsonProperty("payloadKeysToIterate") List<String> payloadKeysToIterate) {
+            @JsonProperty("payloadKeysToModify") List<String> payloadKeysToModify) {
 
 		this.id = "0";
 		this.creatorEmail = creatorEmail;
 		this.concurrencySpecs = concurrencySpecs;
 		this.httpRequestSpecs = httpRequestSpecs;
-		this.payloadKeysToIterate = payloadKeysToIterate;
+		this.payloadKeysToModify = payloadKeysToModify;
 	}
 	
 	public String getId() {
@@ -61,7 +61,7 @@ public class JobRequest {
 		return httpRequestSpecs;
 	}
 
-	public List<String> getPayloadKeysToIterate() {
-		return payloadKeysToIterate;
+	public List<String> getPayloadKeysToModify() {
+		return payloadKeysToModify;
 	}
 }

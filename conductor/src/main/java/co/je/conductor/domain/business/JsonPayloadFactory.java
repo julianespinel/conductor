@@ -29,11 +29,11 @@ public class JsonPayloadFactory {
         return leafJsonNode;
     }
 
-    private static String getModifiedJsonPayload(JsonNode httpPayload, List<String> payloadKeysToIterate, int index) {
+    private static String getModifiedJsonPayload(JsonNode httpPayload, List<String> payloadKeysToModify, int index) {
 
-        for (int i = 0; i < payloadKeysToIterate.size(); i++) {
+        for (int i = 0; i < payloadKeysToModify.size(); i++) {
 
-            String key = payloadKeysToIterate.get(i);
+            String key = payloadKeysToModify.get(i);
             String[] keysArray = key.split("\\.");
             fj.data.List<String> nestedKeys = fj.data.List.list(keysArray);
 
@@ -56,7 +56,7 @@ public class JsonPayloadFactory {
 
         ConcurrencySpecs concurrencySpecs = correctedJobRequest.getConcurrencySpecs();
         HttpRequestSpecs httpRequestSpecs = correctedJobRequest.getHttpRequestSpecs();
-        List<String> payloadKeysToIterate = correctedJobRequest.getPayloadKeysToIterate();
+        List<String> payloadKeysToModify = correctedJobRequest.getPayloadKeysToModify();
 
         String httpMethod = httpRequestSpecs.getHttpMethod();
         boolean isPostOrPutRequest = HttpValidator.isPostOrPutRequest(httpMethod);
@@ -64,14 +64,14 @@ public class JsonPayloadFactory {
         JsonNode httpPayload = httpRequestSpecs.getHttpPayload();
         boolean requestHasPayload = HttpValidator.requestHasPayload(httpPayload);
 
-        if (isPostOrPutRequest && requestHasPayload && !payloadKeysToIterate.isEmpty()) {
+        if (isPostOrPutRequest && requestHasPayload && !payloadKeysToModify.isEmpty()) {
 
             int totalCalls = concurrencySpecs.getTotalCalls();
 
             for (int i = 0; i < totalCalls; i++) {
 
                 JsonNode httpPayloadCopy = httpPayload.deepCopy();
-                String modifiedJsonPayload = getModifiedJsonPayload(httpPayloadCopy, payloadKeysToIterate, i);
+                String modifiedJsonPayload = getModifiedJsonPayload(httpPayloadCopy, payloadKeysToModify, i);
                 payloadList.add(modifiedJsonPayload);
             }
         }
