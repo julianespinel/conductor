@@ -52,19 +52,21 @@ public class HttpValidatorTest {
     @Test
     public void testRequestHasPayload_OK() {
         
-        JsonNode numberNode = JsonNodeFactory.instance.numberNode(1);
+        JsonNodeFactory jsonNodeFactoryInstance = JsonNodeFactory.instance;
+        
+        JsonNode numberNode = jsonNodeFactoryInstance.numberNode(1);
         assertEquals(true, HttpValidator.requestHasPayload(numberNode));
         
-        JsonNode booleanNode = JsonNodeFactory.instance.booleanNode(false);
+        JsonNode booleanNode = jsonNodeFactoryInstance.booleanNode(false);
         assertEquals(true, HttpValidator.requestHasPayload(booleanNode));
         
-        JsonNode binaryNode = JsonNodeFactory.instance.binaryNode("hallo".getBytes());
+        JsonNode binaryNode = jsonNodeFactoryInstance.binaryNode("hallo".getBytes());
         assertEquals(true, HttpValidator.requestHasPayload(binaryNode));
         
-        JsonNode arrayNode = JsonNodeFactory.instance.arrayNode();
+        JsonNode arrayNode = jsonNodeFactoryInstance.arrayNode();
         assertEquals(true, HttpValidator.requestHasPayload(arrayNode));
         
-        JsonNode nullNode = JsonNodeFactory.instance.nullNode();
+        JsonNode nullNode = jsonNodeFactoryInstance.nullNode();
         assertEquals(false, HttpValidator.requestHasPayload(nullNode));
     }
     
