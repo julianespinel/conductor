@@ -12,74 +12,70 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonPayloadFactory {
 
-	private static JsonNode getLeafJsonNode(JsonNode parentJson, fj.data.List<String> nestedKeys) {
-		
-		JsonNode leafJsonNode = null;
-		
-		if (nestedKeys.length() > 1) {
-			
-		    JsonNode childJson = parentJson.get(nestedKeys.head());
-			leafJsonNode = getLeafJsonNode(childJson, nestedKeys.tail());
-			
-		} else {
-			
-			leafJsonNode = parentJson;
-		}
-		
-		return leafJsonNode;
-	}
-	
-	private static String getModifiedJsonPayload(JsonNode httpPayload, List<String> payloadKeysToIterate, int index) {
-	    
-	    JsonNode jsonNode = httpPayload;
+    private static JsonNode getLeafJsonNode(JsonNode parentJson, fj.data.List<String> nestedKeys) {
 
-		for (int i = 0; i < payloadKeysToIterate.size(); i++) {
+        JsonNode leafJsonNode = null;
 
-			String key = payloadKeysToIterate.get(i);
-			String[] keysArray = key.split("\\.");
-			fj.data.List<String> nestedKeys = fj.data.List.list(keysArray);
-			
-			JsonNode leafJsonNode = getLeafJsonNode(httpPayload, nestedKeys);
-			
-			String keyToChange = nestedKeys.last();
+        if (nestedKeys.length() > 1) {
+
+            JsonNode childJson = parentJson.get(nestedKeys.head());
+            leafJsonNode = getLeafJsonNode(childJson, nestedKeys.tail());
+
+        } else {
+
+            leafJsonNode = parentJson;
+        }
+
+        return leafJsonNode;
+    }
+
+    private static String getModifiedJsonPayload(JsonNode httpPayload, List<String> payloadKeysToIterate, int index) {
+
+        for (int i = 0; i < payloadKeysToIterate.size(); i++) {
+
+            String key = payloadKeysToIterate.get(i);
+            String[] keysArray = key.split("\\.");
+            fj.data.List<String> nestedKeys = fj.data.List.list(keysArray);
+
+            JsonNode leafJsonNode = getLeafJsonNode(httpPayload, nestedKeys);
+
+            String keyToChange = nestedKeys.last();
             String value = leafJsonNode.get(keyToChange).asText();
-			String modifiedValue = value + index;
-			
-			ObjectNode objectNode = (ObjectNode) leafJsonNode;
-			objectNode.put(keyToChange, modifiedValue);
-			
-			jsonNode = objectNode;
-		}
-		
-		return jsonNode.toString();
-	}
+            String modifiedValue = value + index;
 
-	public static List<String> generatePayloadList(JobRequest correctedJobRequest) {
+            ObjectNode objectNode = (ObjectNode) leafJsonNode;
+            objectNode.put(keyToChange, modifiedValue);
+        }
 
-		List<String> payloadList = new ArrayList<String>();
-		
-		ConcurrencySpecs concurrencySpecs = correctedJobRequest.getConcurrencySpecs();
-		HttpRequestSpecs httpRequestSpecs = correctedJobRequest.getHttpRequestSpecs();
-		List<String> payloadKeysToIterate = correctedJobRequest.getPayloadKeysToIterate();
+        return httpPayload.toString();
+    }
 
-		String httpMethod = httpRequestSpecs.getHttpMethod();
-		boolean isPostOrPutRequest = HttpValidator.isPostOrPutRequest(httpMethod);
+    public static List<String> generatePayloadList(JobRequest correctedJobRequest) {
 
-		JsonNode httpPayload = httpRequestSpecs.getHttpPayload();
-		boolean requestHasPayload = HttpValidator.requestHasPayload(httpPayload);
+        List<String> payloadList = new ArrayList<String>();
 
-		if (isPostOrPutRequest && requestHasPayload && !payloadKeysToIterate.isEmpty()) {
+        ConcurrencySpecs concurrencySpecs = correctedJobRequest.getConcurrencySpecs();
+        HttpRequestSpecs httpRequestSpecs = correctedJobRequest.getHttpRequestSpecs();
+        List<String> payloadKeysToIterate = correctedJobRequest.getPayloadKeysToIterate();
 
-			int totalCalls = concurrencySpecs.getTotalCalls();
+        String httpMethod = httpRequestSpecs.getHttpMethod();
+        boolean isPostOrPutRequest = HttpValidator.isPostOrPutRequest(httpMethod);
 
-			for (int i = 0; i < totalCalls; i++) {
-				
-			    JsonNode httpPayloadCopy = httpPayload.deepCopy();
-				String modifiedJsonPayload = getModifiedJsonPayload(httpPayloadCopy, payloadKeysToIterate, i);
-				payloadList.add(modifiedJsonPayload);
-			}
-		}
+        JsonNode httpPayload = httpRequestSpecs.getHttpPayload();
+        boolean requestHasPayload = HttpValidator.requestHasPayload(httpPayload);
 
-		return payloadList;
-	}
+        if (isPostOrPutRequest && requestHasPayload && !payloadKeysToIterate.isEmpty()) {
+
+            int totalCalls = concurrencySpecs.getTotalCalls();
+
+            for (int i = 0; i < totalCalls; i++) {
+
+                JsonNode httpPayloadCopy = httpPayload.deepCopy();
+                String modifiedJsonPayload = getModifiedJsonPayload(httpPayloadCopy, payloadKeysToIterate, i);
+                payloadList.add(modifiedJsonPayload);
+            }
+        }
+
+        return payloadList;
+    }
 }

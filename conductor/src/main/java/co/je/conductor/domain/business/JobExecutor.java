@@ -35,8 +35,7 @@ public class JobExecutor implements Runnable {
         this.payloadList = payloadList;
     }
 
-    private static List<JobExecutorWorker> createJobWorkers(int totalCalls, HttpRequestSpecs httpRequestSpecs,
-            List<String> payloadList) {
+    private static List<JobExecutorWorker> createJobWorkers(int totalCalls, HttpRequestSpecs httpRequestSpecs, List<String> payloadList) {
 
         List<JobExecutorWorker> workers = new ArrayList<JobExecutorWorker>();
 
@@ -80,7 +79,7 @@ public class JobExecutor implements Runnable {
 
             } catch (Exception e) {
 
-                LOGGER.error("resolveFutures: " + e.getMessage());
+                LOGGER.error("resolveFutures", e);
             }
         }
 
@@ -117,8 +116,7 @@ public class JobExecutor implements Runnable {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-            LOGGER.error(e.getMessage());
+            LOGGER.error("run", e);
 
         } finally {
 

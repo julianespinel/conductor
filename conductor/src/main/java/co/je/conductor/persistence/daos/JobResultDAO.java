@@ -27,7 +27,7 @@ public class JobResultDAO {
 
     public Either<IException, String> saveJobResult(DB mongoDB, JobResult jobResult) {
 
-        Either<IException, String> either = null;
+        Either<IException, String> jobResultIdEither = null;
 
         try {
 
@@ -40,15 +40,15 @@ public class JobResultDAO {
             jobResultDBO.put("_id", objectId);
             jobResultDBO.put("id", objectId);
             collection.insert(jobResultDBO);
-            either = Either.right(objectId.toString());
+            jobResultIdEither = Either.right(objectId.toString());
 
         } catch (Exception e) {
 
             e.printStackTrace();
             TechnicalException technicalException = new TechnicalException(e.getMessage());
-            either = Either.left(technicalException);
+            jobResultIdEither = Either.left(technicalException);
         }
 
-        return either;
+        return jobResultIdEither;
     }
 }
