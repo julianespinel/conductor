@@ -16,7 +16,7 @@ public class BusinessException implements IException {
 	}
 
 	@Override
-	public String getExceptionType() {
+	public String getType() {
 		
 		return type;
 	}
@@ -31,5 +31,16 @@ public class BusinessException implements IException {
     public boolean isBusinessException() {
         
         return (type.equalsIgnoreCase(ExceptionTypes.BUSINESS.getName()));
+    }
+
+    @Override
+    public int compareTo(IException exception) {
+        
+        int answer = 0;
+        
+        answer += type.compareToIgnoreCase(exception.getType());
+        answer += message.compareToIgnoreCase(exception.getMessage());
+        
+        return answer;
     }
 }

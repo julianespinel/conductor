@@ -32,17 +32,17 @@ public class JobRequestResource {
 		
 		Response response = null;
 		
-		Either<IException, String> either = jobBusiness.createJobRequest(jobRequest);
+		Either<IException, String> createdJobRequestIdEither = jobBusiness.createJobRequest(jobRequest);
 		
-		if (either.isRight()) {
+		if (createdJobRequestIdEither.isRight()) {
 			
-			String createdJobRequestID = either.right().value();
-			Map<String, Object> json = JSONUtils.createKeyValueStringJson("jobID", createdJobRequestID);
+			String createdJobRequestId = createdJobRequestIdEither.right().value();
+			Map<String, Object> json = JSONUtils.createKeyValueStringJson("jobID", createdJobRequestId);
 			response = Response.status(201).entity(json).build();
 			
 		} else {
 			
-			IException exception = either.left().value();
+			IException exception = createdJobRequestIdEither.left().value();
 			response = Response.status(500).entity(exception).build();
 		}
 		

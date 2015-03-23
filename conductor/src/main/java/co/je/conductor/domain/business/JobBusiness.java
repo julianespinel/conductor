@@ -43,18 +43,18 @@ public class JobBusiness {
 
 	public Either<IException, String> createJobRequest(JobRequest jobRequest) {
 
-		Either<IException, String> either = null;
+		Either<IException, String> jobRequestIdEither = null;
 
 		JobRequest correctedJobRequest = getCorrectedJobRequest(jobRequest);
 		List<String> payloadList = JsonPayloadFactory.generatePayloadList(correctedJobRequest);
 
 		try {
 
-			either = jobRequestDAO.createJobRequest(mongoDB, correctedJobRequest);
+			jobRequestIdEither = jobRequestDAO.createJobRequest(mongoDB, correctedJobRequest);
 			
-			if (either.isRight()) {
+			if (jobRequestIdEither.isRight()) {
 			    
-			    String createdJobRequestID = either.right().value();
+			    String createdJobRequestID = jobRequestIdEither.right().value();
                 correctedJobRequest = new JobRequest(createdJobRequestID, correctedJobRequest);
                 
 	            JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, payloadList);
@@ -65,9 +65,9 @@ public class JobBusiness {
 
 		    e.printStackTrace();
 			TechnicalException technicalException = new TechnicalException(e.getMessage());
-			either = Either.left(technicalException);
+			jobRequestIdEither = Either.left(technicalException);
 		}
 
-		return either;
+		return jobRequestIdEither;
 	}
 }
