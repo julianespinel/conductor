@@ -29,15 +29,14 @@ public class JobRequestResource {
 
 	@POST
 	public Response createJobRequest(JobRequest jobRequest) {
-		
+
 		Response response = null;
-		
 		Either<IException, String> createdJobRequestIdEither = jobBusiness.createJobRequest(jobRequest);
 		
 		if (createdJobRequestIdEither.isRight()) {
 			
 			String createdJobRequestId = createdJobRequestIdEither.right().value();
-			Map<String, Object> json = JSONUtils.createKeyValueStringJson("jobID", createdJobRequestId);
+			Map<String, Object> json = JSONUtils.createKeyValueStringJson("jobId", createdJobRequestId);
 			response = Response.status(201).entity(json).build();
 			
 		} else {

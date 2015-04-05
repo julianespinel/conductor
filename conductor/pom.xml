@@ -8,7 +8,7 @@
 	<description>A load testing tool inspired by orchestra conductors</description>
 
 	<properties>
-		<dropwizard.version>0.7.1</dropwizard.version>
+		<dropwizard.version>0.8.0</dropwizard.version>
 	</properties>
 
 	<!-- core -->
@@ -24,9 +24,9 @@
 		<dependency>
 			<groupId>io.dropwizard.modules</groupId>
 			<artifactId>dropwizard-java8</artifactId>
-			<version>0.7.0-1</version>
+			<version>0.8.0-2</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>

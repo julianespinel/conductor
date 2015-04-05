@@ -8,21 +8,17 @@ server:
     
 logging:
   level: INFO
-  loggers:
-    io.dropwizard: INFO
   appenders:
     - type: console
-      threshold: ALL
       timeZone: UTC
+      threshold: WARN
       target: stdout
-      logFormat: # TODO
     - type: file
-      currentLogFilename: /logs/conductor.log
-      threshold: ALL
-      archive: true
-      archivedLogFilenamePattern: /logs/conductor-%d.log
       timeZone: UTC
-      logFormat: # TODO
+      threshold: INFO
+      currentLogFilename: ./logs/conductor.log
+      archivedLogFilenamePattern: ./logs/conductor-%d.log
+      archivedFileCount: 5
 
 mongoDBConfig:
   dbName: conductor_db

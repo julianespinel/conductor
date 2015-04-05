@@ -1,6 +1,6 @@
 package co.je.conductor.domain.business;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpMethod;
 
 import com.fasterxml.jackson.databind.JsonNode;
