@@ -1,5 +1,6 @@
 package co.je.conductor.domain.business;
 
+import java.time.Instant;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -24,9 +25,10 @@ import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.jetty.http.HttpMethod;
 
+import co.je.conductor.domain.entities.HTTPConductorResponse;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 
-public class JobExecutorWorker implements Callable<HttpResponse> {
+public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 
 	public static final int TIMEOUT_IN_MILLISECONDS = 5000;
 
@@ -77,9 +79,11 @@ public class JobExecutorWorker implements Callable<HttpResponse> {
 	}
 
 	@Override
-	public HttpResponse call() throws Exception {
+	public HTTPConductorResponse call() throws Exception {
 
 		HttpResponse result = null;
+		
+		long initialTime = Instant.now().toEpochMilli();
 
 		String httpMethod = httpRequestSpecs.getHttpMethod();
 		String url = httpRequestSpecs.getUrl();
@@ -143,10 +147,12 @@ public class JobExecutorWorker implements Callable<HttpResponse> {
 
 			httpResponse.close();
 			result = httpResponse;
-
 			httpClient.close();
 		}
-
-		return result;
+		
+		long finalTime = Instant.now().toEpochMilli();
+		long requestDurationInMilliseconds = finalTime - initialTime;
+		
+		return new HTTPConductorResponse(result, requestDurationInMilliseconds);
 	}
 }

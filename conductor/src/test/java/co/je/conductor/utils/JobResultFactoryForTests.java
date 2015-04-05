@@ -14,6 +14,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.bson.types.ObjectId;
 
+import co.je.conductor.domain.entities.HTTPConductorResponse;
 import co.je.conductor.domain.entities.JobResult;
 
 public class JobResultFactoryForTests {
@@ -30,16 +31,18 @@ public class JobResultFactoryForTests {
         return httpResponseFactory.newHttpResponse(statusline, context);
     }
 
-    private static List<HttpResponse> getHttpResponseList(int httpResponseListSize) {
+    private static List<HTTPConductorResponse> getHttpResponseList(int httpResponseListSize) {
 
-        List<HttpResponse> httpResponseList = new ArrayList<HttpResponse>();
+        List<HTTPConductorResponse> httpResponseList = new ArrayList<HTTPConductorResponse>();
 
         HttpResponseFactory httpResponseFactory = new DefaultHttpResponseFactory();
+        HttpResponse newHttpResponse = createHttpResponse(httpResponseFactory);
+        long responseTimeInMilliseconds = 100;
 
         for (int i = 0; i < httpResponseListSize; i++) {
 
-            HttpResponse newHttpResponse = createHttpResponse(httpResponseFactory);
-            httpResponseList.add(newHttpResponse);
+            HTTPConductorResponse httpConductorResponse = new HTTPConductorResponse(newHttpResponse, responseTimeInMilliseconds);
+            httpResponseList.add(httpConductorResponse);
         }
 
         return httpResponseList;
@@ -49,8 +52,8 @@ public class JobResultFactoryForTests {
 
         String id = ObjectId.get().toString();
         String jobRequestId = ObjectId.get().toString();
-        List<HttpResponse> httpResponsesList = getHttpResponseList(httpResponseListSize);
+        List<HTTPConductorResponse> httpConductorResponseList = getHttpResponseList(httpResponseListSize);
 
-        return new JobResult(id, jobRequestId, httpResponsesList);
+        return new JobResult(id, jobRequestId, httpConductorResponseList);
     }
 }

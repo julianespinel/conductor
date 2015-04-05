@@ -6,11 +6,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.je.conductor.domain.entities.ConcurrencySpecs;
+import co.je.conductor.domain.entities.HTTPConductorResponse;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.domain.entities.JobResult;
@@ -55,27 +55,27 @@ public class JobExecutor implements Runnable {
         return workers;
     }
 
-    private List<Future<HttpResponse>> executeJobInParallel(ExecutorService threadPool, List<JobExecutorWorker> workers) {
+    private List<Future<HTTPConductorResponse>> executeJobInParallel(ExecutorService threadPool, List<JobExecutorWorker> workers) {
 
-        List<Future<HttpResponse>> httpResponseList = new ArrayList<Future<HttpResponse>>();
+        List<Future<HTTPConductorResponse>> httpConductorResponseList = new ArrayList<Future<HTTPConductorResponse>>();
 
         for (JobExecutorWorker worker : workers) {
 
-            Future<HttpResponse> httpResponse = threadPool.submit(worker);
-            httpResponseList.add(httpResponse);
+            Future<HTTPConductorResponse> httpConductorResponse = threadPool.submit(worker);
+            httpConductorResponseList.add(httpConductorResponse);
         }
 
-        return httpResponseList;
+        return httpConductorResponseList;
     }
 
-    private List<HttpResponse> resolveFutures(List<Future<HttpResponse>> futuresList) {
+    private List<HTTPConductorResponse> resolveFutures(List<Future<HTTPConductorResponse>> futuresList) {
 
-        List<HttpResponse> httpResponsesList = new ArrayList<HttpResponse>();
+        List<HTTPConductorResponse> httpConductorResponseList = new ArrayList<HTTPConductorResponse>();
 
-        for (Future<HttpResponse> future : futuresList) {
+        for (Future<HTTPConductorResponse> future : futuresList) {
 
             try {
-                httpResponsesList.add(future.get());
+                httpConductorResponseList.add(future.get());
 
             } catch (Exception e) {
 
@@ -83,7 +83,7 @@ public class JobExecutor implements Runnable {
             }
         }
 
-        return httpResponsesList;
+        return httpConductorResponseList;
     }
 
     @Override
@@ -103,13 +103,13 @@ public class JobExecutor implements Runnable {
 
             HttpRequestSpecs httpRequestSpecs = jobRequest.getHttpRequestSpecs();
             List<JobExecutorWorker> workers = createJobWorkers(totalCalls, httpRequestSpecs, payloadList);
-            List<Future<HttpResponse>> futuresList = executeJobInParallel(threadPool, workers);
+            List<Future<HTTPConductorResponse>> futuresList = executeJobInParallel(threadPool, workers);
 
             LOGGER.info("workers created and jobs is being executed.");
 
             String jobRequestID = jobRequest.getId();
-            List<HttpResponse> httpResponsesList = resolveFutures(futuresList);
-            JobResult jobResult = new JobResult(jobRequestID, httpResponsesList);
+            List<HTTPConductorResponse> httpConductorResponseList = resolveFutures(futuresList);
+            JobResult jobResult = new JobResult(jobRequestID, httpConductorResponseList);
             jobResultDAO.saveJobResult(mongoDB, jobResult);
 
             LOGGER.info("saved jobResult of the jobRequest: " + jobRequestID);

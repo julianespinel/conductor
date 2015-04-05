@@ -2,8 +2,6 @@ package co.je.conductor.domain.entities;
 
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,22 +9,22 @@ public class JobResult {
 
 	private final String id;
 	private final String jobRequestId;
-	private final List<HttpResponse> httpResponsesList;
+	private final List<HTTPConductorResponse> httpConductorResponseList;
 
 	@JsonCreator
 	public JobResult(@JsonProperty("id") String id, @JsonProperty("jobRequestId") String jobRequestId, 
-			@JsonProperty("httpResponsesList") List<HttpResponse> httpResponsesList) {
+			@JsonProperty("httpConductorResponseList") List<HTTPConductorResponse> httpConductorResponseList) {
 
 		this.id = id;
 		this.jobRequestId = jobRequestId;
-		this.httpResponsesList = httpResponsesList;
+		this.httpConductorResponseList = httpConductorResponseList;
 	}
 
-	public JobResult(String jobRequestId, List<HttpResponse> httpResponsesList) {
+	public JobResult(String jobRequestId, List<HTTPConductorResponse> httpConductorResponseList) {
 
 		this.id = "0";
 		this.jobRequestId = jobRequestId;
-		this.httpResponsesList = httpResponsesList;
+		this.httpConductorResponseList = httpConductorResponseList;
 	}
 
 	public String getId() {
@@ -37,7 +35,7 @@ public class JobResult {
 		return jobRequestId;
 	}
 
-	public List<HttpResponse> getHttpResponsesList() {
-		return httpResponsesList;
+	public List<HTTPConductorResponse> getHttpConductorResponseList() {
+		return httpConductorResponseList;
 	}
 }
