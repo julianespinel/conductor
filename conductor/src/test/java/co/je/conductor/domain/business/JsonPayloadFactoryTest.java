@@ -48,7 +48,7 @@ public class JsonPayloadFactoryTest {
         String id = originalPayload.get(idKey).asText();
         String username = originalPayload.get(usernameKey).asText();
         String city = originalPayload.get("location").get("city").asText();
-        String addressNumber = originalPayload.get("location").get("address").get("number").asText();
+        int addressNumber = originalPayload.get("location").get("address").get("number").asInt();
         
         ObjectMapper objectMapper = new ObjectMapper();
         
@@ -63,7 +63,7 @@ public class JsonPayloadFactoryTest {
                 String generatedId = jsonNode.get(idKey).asText();
                 String generatedUsername = jsonNode.get(usernameKey).asText();
                 String generatedCity = jsonNode.get("location").get("city").asText();
-                String generatedAddressNumber = jsonNode.get("location").get("address").get("number").asText();
+                int generatedAddressNumber = jsonNode.get("location").get("address").get("number").asInt();
                 
                 int index = i;
                 assertEquals(id + index, generatedId);
