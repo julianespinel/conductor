@@ -5,6 +5,7 @@ import java.util.List;
 import co.je.conductor.domain.entities.ConcurrencySpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
+import co.je.conductor.domain.exceptions.UnsupportedJsonNodeException;
 import co.je.conductor.infrastructure.exceptions.IException;
 import co.je.conductor.infrastructure.exceptions.TechnicalException;
 import co.je.conductor.persistence.daos.JobRequestDAO;
@@ -41,7 +42,7 @@ public class JobBusiness {
 		return new JobRequest(creatorEmail, correctedConcurrencySpecs, httpRequestSpecs, payloadKeysToModify);
 	}
 
-	public Either<IException, String> createJobRequest(JobRequest jobRequest) {
+	public Either<IException, String> createJobRequest(JobRequest jobRequest) throws UnsupportedJsonNodeException {
 
 		Either<IException, String> jobRequestIdEither = null;
 

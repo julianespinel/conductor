@@ -9,14 +9,12 @@ import java.util.List;
 import co.je.conductor.domain.entities.ConcurrencySpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
+import co.je.conductor.domain.exceptions.UnsupportedJsonNodeException;
 
-import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.nodes.NodeId;
 
 public class JsonPayloadFactory {
 
@@ -37,7 +35,7 @@ public class JsonPayloadFactory {
         return leafJsonNode;
     }
 
-    private static String getModifiedJsonPayload(JsonNode httpPayload, List<String> payloadKeysToModify, int index) {
+    private static String getModifiedJsonPayload(JsonNode httpPayload, List<String> payloadKeysToModify, int index) throws UnsupportedJsonNodeException {
 
         for (int i = 0; i < payloadKeysToModify.size(); i++) {
 
@@ -83,13 +81,14 @@ public class JsonPayloadFactory {
         return httpPayload.toString();
     }
 
-	private static JsonNode getModifiedValueNode(JsonNode nodeToChange, int index) {
+	private static JsonNode getModifiedValueNode(JsonNode nodeToChange, int index) throws UnsupportedJsonNodeException {
 		
 		JsonNode valueNode = null;
 		
 		if (nodeToChange.isNull() || nodeToChange.isObject()) {
 			
-			// TODO: error!
+			String message = "Null or Object type JSON nodes are not supported.";
+			throw new UnsupportedJsonNodeException(message);
 			
 		} else if (nodeToChange.isBoolean()) {
 			
@@ -120,7 +119,7 @@ public class JsonPayloadFactory {
 		return valueNode;
 	}
 
-	private static ArrayNode getModifiedJsonArray(JsonNode nodeToChange) {
+	private static ArrayNode getModifiedJsonArray(JsonNode nodeToChange) throws UnsupportedJsonNodeException {
 		
 		ArrayNode modifiedJsonArray = JsonNodeFactory.instance.arrayNode();
 		Iterator<JsonNode> elements = nodeToChange.elements();
@@ -133,6 +132,7 @@ public class JsonPayloadFactory {
 			modifiedJsonArray.add(modifiedElementNode);
 			whileIndex++;
 		}
+		
 		return modifiedJsonArray;
 	}
 
@@ -181,13 +181,14 @@ public class JsonPayloadFactory {
 			
 		} else {
 			
-			// TODO: error!
+			String message = "The given JSON node is not a number node.";
+			throw new IllegalArgumentException(message);
 		}
 		
 		return valueNode;
 	}
 
-	public static List<String> generatePayloadList(JobRequest correctedJobRequest) {
+	public static List<String> generatePayloadList(JobRequest correctedJobRequest) throws UnsupportedJsonNodeException {
 
         List<String> payloadList = new ArrayList<String>();
 
