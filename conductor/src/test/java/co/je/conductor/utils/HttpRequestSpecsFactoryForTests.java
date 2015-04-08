@@ -36,14 +36,14 @@ public class HttpRequestSpecsFactoryForTests {
         locationObjectNode.put("country", "US");
         locationObjectNode.put("State", "MA");
         locationObjectNode.put("city", "Boston");
-        httpPayload.put("location", locationObjectNode);
+        httpPayload.set("location", locationObjectNode);
 
         ObjectNode addressObjectNode = JsonNodeFactory.instance.objectNode();
 
-        addressObjectNode.put("number", "30");
+        addressObjectNode.put("number", 30);
         addressObjectNode.put("street", "Orlando Ave");
         addressObjectNode.put("description", "big and beautiful grey house");
-        locationObjectNode.put("address", addressObjectNode);
+        locationObjectNode.set("address", addressObjectNode);
 
         return httpPayload;
     }
