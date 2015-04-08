@@ -14,7 +14,7 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -29,13 +29,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JobRequestResourceTest {
 
-	private static final ObjectMapper objectMapper = Jackson.newObjectMapper();
-	private static final JobBusiness jobBusinessMock = Mockito.mock(JobBusiness.class);
-	private static final JobRequestResource jobRequestResource = new JobRequestResource(jobBusinessMock);
+	private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+	private final JobBusiness jobBusinessMock = Mockito.mock(JobBusiness.class);
+	private final JobRequestResource jobRequestResource = new JobRequestResource(jobBusinessMock);
 
-	@ClassRule
-	public static final ResourceTestRule resources = ResourceTestRule.builder()
-	.setMapper(objectMapper).addResource(jobRequestResource).build();
+	@Rule
+	public final ResourceTestRule resources = ResourceTestRule.builder().setMapper(objectMapper).addResource(jobRequestResource).build();
 
 	private Builder getDefaultHttpClient(String uri) {
 
@@ -93,6 +92,30 @@ public class JobRequestResourceTest {
 			IException exception = response.readEntity(IException.class);
 			assertNotNull(exception);
 			assertEquals(0, technicalException.compareTo(exception));
+
+		} catch (UnsupportedJsonNodeException e) {
+
+			fail("Unexpected exception: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testCreateJobRequest_NOK_unsupportedJsonNodeException() {
+
+		String uri = "/jobs";
+		JobRequest jobRequest = JobRequestFactoryForTests.getJobRequest();
+
+		try {
+
+			Mockito.doThrow(UnsupportedJsonNodeException.class).when(jobBusinessMock).createJobRequest(Mockito.any(JobRequest.class));
+			Response response = getDefaultHttpClient(uri).post(Entity.json(jobRequest));
+			assertNotNull(response);
+
+			int statusCode = response.getStatus();
+			assertEquals(500, statusCode);
+
+			UnsupportedJsonNodeException exception = response.readEntity(UnsupportedJsonNodeException.class);
+			assertNotNull(exception);
 
 		} catch (UnsupportedJsonNodeException e) {
 
