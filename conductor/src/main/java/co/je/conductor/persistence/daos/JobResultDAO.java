@@ -1,54 +1,55 @@
 package co.je.conductor.persistence.daos;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import co.je.conductor.domain.entities.JobResult;
-import co.je.conductor.infrastructure.exceptions.IException;
-import co.je.conductor.infrastructure.exceptions.TechnicalException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
-import fj.data.Either;
-
 public class JobResultDAO {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(JobResultDAO.class);
 
-    public static final String JOBS_RESULTS_COLLECTION = "jobs_results";
+	public static final String JOBS_RESULTS_COLLECTION = "jobs_results";
 
-    private final ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-    public JobResultDAO(ObjectMapper objectMapper) {
-        super();
-        this.objectMapper = objectMapper;
-    }
+	public JobResultDAO(ObjectMapper objectMapper) {
+		
+		this.objectMapper = objectMapper;
+	}
 
-    public Either<IException, String> saveJobResult(DB mongoDB, JobResult jobResult) {
+	public String saveJobResult(DB mongoDB, JobResult jobResult) {
+		
+		String jobResultId = "";
 
-        Either<IException, String> jobResultIdEither = null;
+		try {
+			
+			DBCollection collection = mongoDB.getCollection(JOBS_RESULTS_COLLECTION);
+			String jobResultJson = objectMapper.writeValueAsString(jobResult);
+			
+			DBObject jobResultDBO = (DBObject) JSON.parse(jobResultJson);
 
-        try {
+			ObjectId objectId = ObjectId.get();
+			jobResultDBO.put("_id", objectId);
+			jobResultDBO.put("id", objectId);
+			collection.insert(jobResultDBO);
 
-            DBCollection collection = mongoDB.getCollection(JOBS_RESULTS_COLLECTION);
-            
-            String jobResultJson = objectMapper.writeValueAsString(jobResult);
-            DBObject jobResultDBO = (DBObject) JSON.parse(jobResultJson);
-
-            ObjectId objectId = ObjectId.get();
-            jobResultDBO.put("_id", objectId);
-            jobResultDBO.put("id", objectId);
-            collection.insert(jobResultDBO);
-            jobResultIdEither = Either.right(objectId.toString());
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            TechnicalException technicalException = new TechnicalException(e.getMessage());
-            jobResultIdEither = Either.left(technicalException);
-        }
-
-        return jobResultIdEither;
-    }
+			jobResultId = objectId.toString();
+			
+		} catch (JsonProcessingException e) {
+			
+			LOGGER.error("saveJobResult", e);
+			throw new IllegalArgumentException("The given json could not be parsed.");
+		}
+		
+		return jobResultId;
+	}
 }

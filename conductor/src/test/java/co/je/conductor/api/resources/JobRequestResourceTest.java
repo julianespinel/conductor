@@ -3,7 +3,6 @@ package co.je.conductor.api.resources;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import fj.data.Either;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.junit.ResourceTestRule;
 
@@ -21,8 +20,6 @@ import org.mockito.Mockito;
 import co.je.conductor.domain.business.JobBusiness;
 import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.domain.exceptions.UnsupportedJsonNodeException;
-import co.je.conductor.infrastructure.exceptions.IException;
-import co.je.conductor.infrastructure.exceptions.TechnicalException;
 import co.je.conductor.utils.JobRequestFactoryForTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,8 +49,7 @@ public class JobRequestResourceTest {
 		try {
 
 			String expectedJobId = "234";
-			Either<IException, String> createdJobRequestIdEither = Either.right(expectedJobId);
-			Mockito.when(jobBusinessMock.createJobRequest(Mockito.any(JobRequest.class))).thenReturn(createdJobRequestIdEither);
+			Mockito.when(jobBusinessMock.createJobRequest(Mockito.any(JobRequest.class))).thenReturn(expectedJobId);
 
 			Response response = getDefaultHttpClient(uri).post(Entity.json(jobRequest));
 			assertNotNull(response);
@@ -69,35 +65,7 @@ public class JobRequestResourceTest {
 
 			fail("Unexpected exception: " + e.getMessage());
 		}
-	}
-
-	@Test
-	public void testCreateJobRequest_NOK_failedCreatingJobRequest() {
-
-		String uri = "/jobs";
-		JobRequest jobRequest = JobRequestFactoryForTests.getJobRequest();
-
-		try {
-
-			IException technicalException = new TechnicalException("The job request could not be created.");
-			Either<IException, String> createdJobRequestIdEither = Either.left(technicalException);
-			Mockito.when(jobBusinessMock.createJobRequest(Mockito.any(JobRequest.class))).thenReturn(createdJobRequestIdEither);
-
-			Response response = getDefaultHttpClient(uri).post(Entity.json(jobRequest));
-			assertNotNull(response);
-
-			int statusCode = response.getStatus();
-			assertEquals(500, statusCode);
-
-			IException exception = response.readEntity(IException.class);
-			assertNotNull(exception);
-			assertEquals(0, technicalException.compareTo(exception));
-
-		} catch (UnsupportedJsonNodeException e) {
-
-			fail("Unexpected exception: " + e.getMessage());
-		}
-	}
+	}	
 	
 	@Test
 	public void testCreateJobRequest_NOK_unsupportedJsonNodeException() {

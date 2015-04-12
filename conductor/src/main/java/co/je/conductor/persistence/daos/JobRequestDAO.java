@@ -5,56 +5,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.je.conductor.domain.entities.JobRequest;
-import co.je.conductor.infrastructure.exceptions.IException;
-import co.je.conductor.infrastructure.exceptions.TechnicalException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
-import fj.data.Either;
-
 public class JobRequestDAO {
 
-    public static final String JOBS_REQUESTS_COLLECTION = "jobs_requests";
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobRequestDAO.class);
+	public static final String JOBS_REQUESTS_COLLECTION = "jobs_requests";
 
-    private final ObjectMapper objectMapper;
+	private static final Logger LOGGER = LoggerFactory.getLogger(JobRequestDAO.class);
 
-    public JobRequestDAO(ObjectMapper objectMapper) {
+	private final ObjectMapper objectMapper;
 
-        this.objectMapper = objectMapper;
-    }
+	public JobRequestDAO(ObjectMapper objectMapper) {
 
-    public Either<IException, String> createJobRequest(DB mongoDB, JobRequest jobRequest) {
+		this.objectMapper = objectMapper;
+	}
 
-        Either<IException, String> either = null;
+	public String createJobRequest(DB mongoDB, JobRequest jobRequest) {
 
-        try {
+		String jobRequestId = "";
+		
+		try {
+			
+			DBCollection collection = mongoDB.getCollection(JOBS_REQUESTS_COLLECTION);
 
-            DBCollection collection = mongoDB.getCollection(JOBS_REQUESTS_COLLECTION);
+			String jobRequestJson = objectMapper.writeValueAsString(jobRequest);
+			DBObject jobRequestDBO = (DBObject) JSON.parse(jobRequestJson);
 
-            String jobRequestJson = objectMapper.writeValueAsString(jobRequest);
-            DBObject jobRequestDBO = (DBObject) JSON.parse(jobRequestJson);
+			ObjectId objectId = ObjectId.get();
+			jobRequestDBO.put("_id", objectId);
+			jobRequestDBO.put("id", objectId);
+			collection.insert(jobRequestDBO);
+			
+			jobRequestId = objectId.toString();
+			
+		} catch (JsonProcessingException e) {
+			
+			LOGGER.error("createJobRequest", e);
+			throw new IllegalArgumentException("Could not parse the given json");
+		}
 
-            ObjectId objectId = ObjectId.get();
-            jobRequestDBO.put("_id", objectId);
-            jobRequestDBO.put("id", objectId);
-            collection.insert(jobRequestDBO);
-            either = Either.right(objectId.toString());
-            
-            LOGGER.info("createJobRequest: " + objectId);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            TechnicalException technicalException = new TechnicalException(e.getMessage());
-            either = Either.left(technicalException);
-        }
-
-        return either;
-    }
+		return jobRequestId;
+	}
 }

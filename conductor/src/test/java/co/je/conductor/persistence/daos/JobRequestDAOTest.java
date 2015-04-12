@@ -2,6 +2,7 @@ package co.je.conductor.persistence.daos;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -9,16 +10,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import co.je.conductor.domain.entities.JobRequest;
-import co.je.conductor.infrastructure.exceptions.IException;
 import co.je.conductor.utils.JobRequestFactoryForTests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-
-import fj.data.Either;
 
 public class JobRequestDAOTest {
 
@@ -72,25 +72,27 @@ public class JobRequestDAOTest {
     public void testCreateJobRequest_OK() {
         
         JobRequest jobRequest = JobRequestFactoryForTests.getJobRequest();
-        Either<IException, String> either = jobRequestDAO.createJobRequest(mongoDB, jobRequest);
-        
-        assertNotNull(either);
-        assertEquals(true, either.isRight());
-        
-        String requestId = either.right().value();
-        assertEquals(false, StringUtils.isBlank(requestId));
+        String createdJobRequestId = jobRequestDAO.createJobRequest(mongoDB, jobRequest);
+        assertEquals(false, StringUtils.isBlank(createdJobRequestId));
     }
     
     @Test
-    public void testCreateJobRequest_NOK() {
+    public void testCreateJobRequest_NOK_JsonProcessingException() {
         
-        JobRequest nullJobRequest = null;
-        Either<IException, String> jobRequestIdeither = jobRequestDAO.createJobRequest(mongoDB, nullJobRequest);
-        
-        assertNotNull(jobRequestIdeither);
-        assertEquals(false, jobRequestIdeither.isRight());
-        
-        IException exception = jobRequestIdeither.left().value();
-        assertEquals(false, exception.isBusinessException());
+        try {
+        	
+        	objectMapper = Mockito.mock(ObjectMapper.class);
+        	jobRequestDAO = new JobRequestDAO(objectMapper);
+        	
+        	JobRequest nullJobRequest = null;
+        	Mockito.doThrow(JsonProcessingException.class).when(objectMapper).writeValueAsString(nullJobRequest);
+        	
+        	jobRequestDAO.createJobRequest(mongoDB, nullJobRequest);
+        	fail("Method should throw an IllegalArgumentException");
+			
+		} catch (JsonProcessingException | IllegalArgumentException e) {
+			
+			assertNotNull(e);
+		}
     }
 }
