@@ -1,4 +1,4 @@
-# Conductor
+# Conductor [![Build Status](https://travis-ci.org/julianespinel/conductor.svg?branch=master)](https://travis-ci.org/julianespinel/conductor)
 
 A load testing tool inspired by orchestra conductors.
 
