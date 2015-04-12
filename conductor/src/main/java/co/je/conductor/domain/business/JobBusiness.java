@@ -6,14 +6,10 @@ import co.je.conductor.domain.entities.ConcurrencySpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.domain.exceptions.UnsupportedJsonNodeException;
-import co.je.conductor.infrastructure.exceptions.IException;
-import co.je.conductor.infrastructure.exceptions.TechnicalException;
 import co.je.conductor.persistence.daos.JobRequestDAO;
 import co.je.conductor.persistence.daos.JobResultDAO;
 
 import com.mongodb.DB;
-
-import fj.data.Either;
 
 public class JobBusiness {
 
@@ -22,7 +18,7 @@ public class JobBusiness {
 	private final JobResultDAO jobResultDAO;
 
 	public JobBusiness(DB mongoDB, JobRequestDAO jobRequestDAO, JobResultDAO jobResultDAO) {
-		
+
 		this.mongoDB = mongoDB;
 		this.jobRequestDAO = jobRequestDAO;
 		this.jobResultDAO = jobResultDAO;
@@ -32,7 +28,7 @@ public class JobBusiness {
 
 		String creatorEmail = jobRequest.getCreatorEmail();
 
-		// Correct concurrency specification.
+		// Correct concurrency specification in case of errors.
 		ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
 		ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
 
@@ -42,33 +38,16 @@ public class JobBusiness {
 		return new JobRequest(creatorEmail, correctedConcurrencySpecs, httpRequestSpecs, payloadKeysToModify);
 	}
 
-	public Either<IException, String> createJobRequest(JobRequest jobRequest) throws UnsupportedJsonNodeException {
-
-		Either<IException, String> jobRequestIdEither = null;
+	public String createJobRequest(JobRequest jobRequest) throws UnsupportedJsonNodeException {
 
 		JobRequest correctedJobRequest = getCorrectedJobRequest(jobRequest);
-		List<String> payloadList = JsonPayloadFactory.generatePayloadList(correctedJobRequest);
+		String jobRequestId = jobRequestDAO.createJobRequest(mongoDB, correctedJobRequest);
+		
+		correctedJobRequest = new JobRequest(jobRequestId, correctedJobRequest);
+		List<String> generatedPayloads = JsonPayloadFactory.generatePayloadList(correctedJobRequest);
+		JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, generatedPayloads);
+		jobExecutor.run();
 
-		try {
-
-			jobRequestIdEither = jobRequestDAO.createJobRequest(mongoDB, correctedJobRequest);
-			
-			if (jobRequestIdEither.isRight()) {
-			    
-			    String createdJobRequestID = jobRequestIdEither.right().value();
-                correctedJobRequest = new JobRequest(createdJobRequestID, correctedJobRequest);
-                
-	            JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, payloadList);
-	            jobExecutor.run();
-			}
-
-		} catch (Exception e) {
-
-		    e.printStackTrace();
-			TechnicalException technicalException = new TechnicalException(e.getMessage());
-			jobRequestIdEither = Either.left(technicalException);
-		}
-
-		return jobRequestIdEither;
+		return jobRequestId;
 	}
 }

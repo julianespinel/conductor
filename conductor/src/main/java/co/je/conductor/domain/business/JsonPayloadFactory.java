@@ -51,29 +51,6 @@ public class JsonPayloadFactory {
             
             ObjectNode objectNode = (ObjectNode) leafJsonNode;
             objectNode.set(keyToChange, valueNode);
-            
-//            System.out.println(nodeToChange);
-//            System.out.println("*************************************** 1");
-//            System.out.println("a " + nodeToChange.isArray());
-//            System.out.println("b " + nodeToChange.isBigDecimal());
-//            System.out.println("c " + nodeToChange.isBigInteger());
-//            System.out.println("d " + nodeToChange.isBinary());
-//            System.out.println("e " + nodeToChange.isContainerNode());
-//            System.out.println("f " + nodeToChange.isDouble());
-//            System.out.println("g " + nodeToChange.isFloat());
-//            System.out.println("h " + nodeToChange.isFloatingPointNumber());
-//            System.out.println("i " + nodeToChange.isInt());
-//            System.out.println("j " + nodeToChange.isIntegralNumber());
-//            System.out.println("k " + nodeToChange.isLong());
-//            System.out.println("l " + nodeToChange.isMissingNode());
-//            System.out.println("m " + nodeToChange.isNull());
-//            System.out.println("n " + nodeToChange.isNumber());
-//            System.out.println("o " + nodeToChange.isObject());
-//            System.out.println("p " + nodeToChange.isPojo());
-//            System.out.println("q " + nodeToChange.isShort());
-//            System.out.println("r " + nodeToChange.isTextual());
-//            System.out.println("s " + nodeToChange.isValueNode());
-//            System.out.println("*************************************** 2");
         }
         
         System.out.println(httpPayload);
