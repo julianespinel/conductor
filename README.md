@@ -36,7 +36,7 @@ In order to execute a load test, you should define a job request. A job request 
         "httpPayload": {
             "serviceName": "auth",
             "host": "104.131.6.14",
-            "port": "8000",
+            "port": 8000,
             "protocol": "http",
             "prefix": "auth"
         }
@@ -97,7 +97,7 @@ As you can see a JobRequest is composed of 4 main parts:
     {
         "serviceName": "auth0",
         "host": "104.131.6.14",
-        "port": "80000",
+        "port": 8001,
         "protocol": "http",
         "prefix": "auth0"
     }
@@ -109,7 +109,7 @@ As you can see a JobRequest is composed of 4 main parts:
     {
         "serviceName": "auth1",
         "host": "104.131.6.14",
-        "port": "80001",
+        "port": 8002,
         "protocol": "http",
         "prefix": "auth1"
     }
@@ -121,7 +121,7 @@ As you can see a JobRequest is composed of 4 main parts:
     {
         "serviceName": "auth2",
         "host": "104.131.6.14",
-        "port": "80002",
+        "port": 8003,
         "protocol": "http",
         "prefix": "auth2"
     }
@@ -131,7 +131,10 @@ As you can see a JobRequest is composed of 4 main parts:
     
     As you can see all the generated payloads are the same except for the values of the keys referenced in the "payloadKeysToModify" array: "serviceName", "port" and "prefix". 
     
-    How does Conductor modify those values? Currently we only get the original values and append a number to them. This will change in upcoming versions. We will identify data types (strings, numbers, booleans, etc) and make modifications that are more appropriate for each type.
+    How does Conductor modify those values? Conductor identify the data types of the values from the keys to iterate, and apply the following changes to them in order to generate the new payloads. Example: given index = 1, then: 
+    1. String: "originalString" + index -> originalString1
+    1. Number: 123 + index -> 124
+    1. Boolean: true -> false
 
 ## API
 
