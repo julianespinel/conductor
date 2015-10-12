@@ -10,11 +10,11 @@ The main objective of Conductor is to execute load tests against REST APIs.
 
 ## How to install
 
-1. Make a git clone of this repository: `git clone https://github.com/julianespinel/conductor.git`
-1. Go to the following directory: conductor/scripts
-1. Execute the script named: build-and-run.sh (It will start a new process using the port 9001)
-1. Test the service is alive making a GET request to `http://localhost:9001/conductor/admin/ping`
-1. If you get `pong` as response that means Conductor is up and running
+1. `git clone https://github.com/julianespinel/conductor.git`
+1. `cd conductor/scripts`
+1. `sh build-and-run.sh` (It will start a new process using the port 9001)
+1. Make a GET request to: `http://localhost:9001/conductor/admin/ping`
+1. If you get `pong` as response then Conductor is up and running
 
 ## How to use
 
@@ -23,9 +23,9 @@ In order to execute a load test, you should define a job request. A job request 
 ```json 
 {
     "creatorEmail": "yourname@domain.com",
-    "concurrencySpecs": {
+    "executionSpecs": {
         "totalCalls": 10,
-        "concurrentCalls": 5
+        "parallelCalls": 5
     },
     "httpRequestSpecs": {
         "httpMethod": "POST",
@@ -55,14 +55,14 @@ As you can see a JobRequest is composed of 4 main parts:
 
 	Is the email where the load test results will be sent.
 
-2. concurrencySpecs
+2. executionSpecs
 
-	Defines the concurrecy specifications of the load test. You have to define 2 things here: the total number of HTTP calls you want Conductor to execute, and how many of them should be executed at the same time.
+	Defines the execution specifications of the load test. You have to define 2 things here: the total number of HTTP calls you want Conductor to execute, and how many of them should be executed at the same time.
     
-    In this example we wanted to execute 10 HTTP requests but in sets of 5 concurrent calls. It means that the hole test will be executed in two rounds:
+    In this example we wanted to execute 10 HTTP requests but in sets of 5 parallel calls. It means that the load test will be executed in two rounds:
     
-    1. Round 1: 5 concurrent calls
-    1. Round 2: 5 concurrent calls.
+    1. Round 1: 5 parallel calls.
+    1. Round 2: 5 parallel calls.
        
 1. httpRequestSpecs
 
@@ -77,7 +77,7 @@ As you can see a JobRequest is composed of 4 main parts:
 
 1. payloadKeysToModify
 
-	If we are testing a service that creates an object into a DB (for example), we can't send the same payload in each HTTP request because probably the service will tell us that the object is already created. For this reason is imporant that Conductor generates a different HTTP payload for each request. How do we tell Conductor to do it?
+	If we are testing a service that creates an object into a DB (for example), we can't send the same payload in each HTTP request because probably the service will tell us that the object is already created. For this reason it is important that Conductor generates a different HTTP payload for each request. How do we tell Conductor to do that?
 	
     In "payloadKeysToModify" we should define an array that references the keys of the "httpPayload" we want to change on each request. In the example above the array was: 
     
@@ -138,9 +138,9 @@ As you can see a JobRequest is composed of 4 main parts:
 
 ## API
 
-We offer an API with one REST service to create load tests. We will evolve this API in further versions in order to be able to automate load tests creation, management and reporting.
+We offer an API to create load tests. We will evolve this API in further versions in order to be able to automate load tests creation, management and reporting.
 
-1. Create job request
+### 1. Create job request
 
 <pre>
 HTTP method: POST
@@ -148,9 +148,9 @@ URL:  http://localhost:9001/conductor/api/jobs
 Payload: job request json
 </pre>
 
-### Examples
+#### Examples
 
-#### GET and DELETE requests
+##### GET and DELETE requests
 
 <pre>
 HTTP method: POST
@@ -161,9 +161,9 @@ Payload:
 ```json
 {
     "creatorEmail": "julianespinel@gmail.com",
-    "concurrencySpecs": {
+    "executionSpecs": {
         "totalCalls": 10,
-        "concurrentCalls": 5
+        "parallelCalls": 5
     },
     "httpRequestSpecs": {
         "httpMethod": "GET",
@@ -175,7 +175,7 @@ Payload:
 }
 ```
 
-#### POST and PUT requests
+##### POST and PUT requests
 
 <pre>
 HTTP method: POST
@@ -186,9 +186,9 @@ Payload:
 ```json
 {
     "creatorEmail": "julianespinel@gmail.com",
-    "concurrencySpecs": {
+    "executionSpecs": {
         "totalCalls": 10,
-        "concurrentCalls": 5
+        "parallelCalls": 5
     },
     "httpRequestSpecs": {
         "httpMethod": "POST",
