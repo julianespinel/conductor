@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import co.je.conductor.domain.entities.ConcurrencySpecs;
+import co.je.conductor.domain.entities.ExecutionSpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.domain.exceptions.UnsupportedJsonNodeException;
@@ -169,7 +169,7 @@ public class JsonPayloadFactory {
 
         List<String> payloadList = new ArrayList<String>();
 
-        ConcurrencySpecs concurrencySpecs = correctedJobRequest.getConcurrencySpecs();
+        ExecutionSpecs executionSpecs = correctedJobRequest.getExecutionSpecs();
         HttpRequestSpecs httpRequestSpecs = correctedJobRequest.getHttpRequestSpecs();
         List<String> payloadKeysToModify = correctedJobRequest.getPayloadKeysToModify();
 
@@ -181,7 +181,7 @@ public class JsonPayloadFactory {
 
         if (isPostOrPutRequest && requestHasPayload && !payloadKeysToModify.isEmpty()) {
 
-            int totalCalls = concurrencySpecs.getTotalCalls();
+            int totalCalls = executionSpecs.getTotalCalls();
 
             for (int i = 0; i < totalCalls; i++) {
 

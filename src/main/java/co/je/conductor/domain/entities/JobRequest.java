@@ -9,16 +9,16 @@ public class JobRequest {
 
 	private final String id;
 	private final String creatorEmail;
-	private final ConcurrencySpecs concurrencySpecs;
+	private final ExecutionSpecs executionSpecs;
 	private final HttpRequestSpecs httpRequestSpecs;
 	private final List<String> payloadKeysToModify;
 
-	public JobRequest(String id, String creatorEmail, ConcurrencySpecs concurrencySpecs, 
+	public JobRequest(String id, String creatorEmail, ExecutionSpecs executionSpecs,
 	        HttpRequestSpecs httpRequestSpecs, List<String> payloadKeysToModify) {
 
 		this.id = id;
 		this.creatorEmail = creatorEmail;
-		this.concurrencySpecs = concurrencySpecs;
+		this.executionSpecs = executionSpecs;
 		this.httpRequestSpecs = httpRequestSpecs;
 		this.payloadKeysToModify = payloadKeysToModify;
 	}
@@ -27,20 +27,20 @@ public class JobRequest {
 	    
 	    this.id = id;
 	    this.creatorEmail = jobRequest.getCreatorEmail();
-        this.concurrencySpecs = jobRequest.getConcurrencySpecs();
+        this.executionSpecs = jobRequest.getExecutionSpecs();
         this.httpRequestSpecs = jobRequest.getHttpRequestSpecs();
         this.payloadKeysToModify = jobRequest.getPayloadKeysToModify();
     }
 
 	@JsonCreator
 	public JobRequest(@JsonProperty("creatorEmail") String creatorEmail, 
-            @JsonProperty("concurrencySpecs") ConcurrencySpecs concurrencySpecs, 
+            @JsonProperty("executionSpecs") ExecutionSpecs executionSpecs,
             @JsonProperty("httpRequestSpecs") HttpRequestSpecs httpRequestSpecs,
             @JsonProperty("payloadKeysToModify") List<String> payloadKeysToModify) {
 
 		this.id = "0";
 		this.creatorEmail = creatorEmail;
-		this.concurrencySpecs = concurrencySpecs;
+		this.executionSpecs = executionSpecs;
 		this.httpRequestSpecs = httpRequestSpecs;
 		this.payloadKeysToModify = payloadKeysToModify;
 	}
@@ -53,8 +53,8 @@ public class JobRequest {
 		return creatorEmail;
 	}
 
-	public ConcurrencySpecs getConcurrencySpecs() {
-		return concurrencySpecs;
+	public ExecutionSpecs getExecutionSpecs() {
+		return executionSpecs;
 	}
 
 	public HttpRequestSpecs getHttpRequestSpecs() {

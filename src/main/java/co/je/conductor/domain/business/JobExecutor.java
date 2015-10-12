@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.je.conductor.domain.entities.ConcurrencySpecs;
+import co.je.conductor.domain.entities.ExecutionSpecs;
 import co.je.conductor.domain.entities.HTTPConductorResponse;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
@@ -91,10 +91,10 @@ public class JobExecutor implements Runnable {
 
         LOGGER.info("running jobRequest: " + jobRequest.getId());
 
-        ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
+        ExecutionSpecs executionSpecs = jobRequest.getExecutionSpecs();
 
-        int totalCalls = concurrencySpecs.getTotalCalls();
-        int concurrentCalls = concurrencySpecs.getConcurrentCalls();
+        int totalCalls = executionSpecs.getTotalCalls();
+        int concurrentCalls = executionSpecs.getParallelCalls();
         ExecutorService threadPool = Executors.newFixedThreadPool(concurrentCalls);
 
         LOGGER.info("threadPool created, size: " + concurrentCalls);

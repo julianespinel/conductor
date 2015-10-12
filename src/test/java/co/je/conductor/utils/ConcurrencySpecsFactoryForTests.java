@@ -1,14 +1,14 @@
 package co.je.conductor.utils;
 
-import co.je.conductor.domain.entities.ConcurrencySpecs;
+import co.je.conductor.domain.entities.ExecutionSpecs;
 
 public class ConcurrencySpecsFactoryForTests {
     
-    public static ConcurrencySpecs getConcurrencySpecs() {
+    public static ExecutionSpecs getConcurrencySpecs() {
 
         int totalCalls = 10;
         int concurrentCalls = 5;
-        ConcurrencySpecs concurrencySpecs = new ConcurrencySpecs(totalCalls, concurrentCalls);
-        return concurrencySpecs;
+        ExecutionSpecs executionSpecs = new ExecutionSpecs(totalCalls, concurrentCalls);
+        return executionSpecs;
     }
 }

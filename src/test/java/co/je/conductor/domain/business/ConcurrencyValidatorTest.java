@@ -2,9 +2,8 @@ package co.je.conductor.domain.business;
 
 import static org.junit.Assert.*;
 
+import co.je.conductor.domain.entities.ExecutionSpecs;
 import org.junit.Test;
-
-import co.je.conductor.domain.entities.ConcurrencySpecs;
 
 public class ConcurrencyValidatorTest {
     
@@ -13,11 +12,11 @@ public class ConcurrencyValidatorTest {
         
         int totalCalls = 100;
         int concurrentCalls = 10;
-        ConcurrencySpecs concurrencySpecs = new ConcurrencySpecs(totalCalls, concurrentCalls);
-        ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
+        ExecutionSpecs executionSpecs = new ExecutionSpecs(totalCalls, concurrentCalls);
+        ExecutionSpecs correctedExecutionSpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(executionSpecs);
         
-        assertNotNull(correctedConcurrencySpecs);
-        assertEquals(0, concurrencySpecs.compareTo(correctedConcurrencySpecs));
+        assertNotNull(correctedExecutionSpecs);
+        assertEquals(0, executionSpecs.compareTo(correctedExecutionSpecs));
     }
     
     @Test
@@ -25,11 +24,11 @@ public class ConcurrencyValidatorTest {
         
         int totalCalls = 10;
         int concurrentCalls = 10;
-        ConcurrencySpecs concurrencySpecs = new ConcurrencySpecs(totalCalls, concurrentCalls);
-        ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
+        ExecutionSpecs executionSpecs = new ExecutionSpecs(totalCalls, concurrentCalls);
+        ExecutionSpecs correctedExecutionSpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(executionSpecs);
         
-        assertNotNull(correctedConcurrencySpecs);
-        assertEquals(0, concurrencySpecs.compareTo(correctedConcurrencySpecs));
+        assertNotNull(correctedExecutionSpecs);
+        assertEquals(0, executionSpecs.compareTo(correctedExecutionSpecs));
     }
     
     @Test
@@ -37,11 +36,11 @@ public class ConcurrencyValidatorTest {
         
         int totalCalls = 10;
         int concurrentCalls = 100;
-        ConcurrencySpecs concurrencySpecs = new ConcurrencySpecs(totalCalls, concurrentCalls);
-        ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
+        ExecutionSpecs executionSpecs = new ExecutionSpecs(totalCalls, concurrentCalls);
+        ExecutionSpecs correctedExecutionSpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(executionSpecs);
         
-        assertNotNull(correctedConcurrencySpecs);
-        assertEquals(totalCalls, correctedConcurrencySpecs.getTotalCalls());
-        assertEquals(totalCalls, correctedConcurrencySpecs.getConcurrentCalls());
+        assertNotNull(correctedExecutionSpecs);
+        assertEquals(totalCalls, correctedExecutionSpecs.getTotalCalls());
+        assertEquals(totalCalls, correctedExecutionSpecs.getParallelCalls());
     }
 }

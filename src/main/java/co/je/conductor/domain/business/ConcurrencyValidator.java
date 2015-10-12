@@ -1,22 +1,22 @@
 package co.je.conductor.domain.business;
 
-import co.je.conductor.domain.entities.ConcurrencySpecs;
+import co.je.conductor.domain.entities.ExecutionSpecs;
 
 public class ConcurrencyValidator {
 
-    public static ConcurrencySpecs getCorrectedConcurrencySpecs(ConcurrencySpecs originalConcurrencySpecs) {
+    public static ExecutionSpecs getCorrectedConcurrencySpecs(ExecutionSpecs originalExecutionSpecs) {
 
-        ConcurrencySpecs correctedConcurrencySpecs = originalConcurrencySpecs;
+        ExecutionSpecs correctedExecutionSpecs = originalExecutionSpecs;
 
-        int totalCalls = originalConcurrencySpecs.getTotalCalls();
-        int concurrentCalls = originalConcurrencySpecs.getConcurrentCalls();
+        int totalCalls = originalExecutionSpecs.getTotalCalls();
+        int concurrentCalls = originalExecutionSpecs.getParallelCalls();
 
         if (concurrentCalls > totalCalls) {
 
             int correctedConcurrentCalls = totalCalls;
-            correctedConcurrencySpecs = new ConcurrencySpecs(totalCalls, correctedConcurrentCalls);
+            correctedExecutionSpecs = new ExecutionSpecs(totalCalls, correctedConcurrentCalls);
         }
 
-        return correctedConcurrencySpecs;
+        return correctedExecutionSpecs;
     }
 }

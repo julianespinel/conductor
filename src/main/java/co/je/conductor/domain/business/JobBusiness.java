@@ -2,7 +2,7 @@ package co.je.conductor.domain.business;
 
 import java.util.List;
 
-import co.je.conductor.domain.entities.ConcurrencySpecs;
+import co.je.conductor.domain.entities.ExecutionSpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
 import co.je.conductor.domain.entities.JobRequest;
 import co.je.conductor.domain.exceptions.UnsupportedJsonNodeException;
@@ -29,13 +29,13 @@ public class JobBusiness {
 		String creatorEmail = jobRequest.getCreatorEmail();
 
 		// Correct concurrency specification in case of errors.
-		ConcurrencySpecs concurrencySpecs = jobRequest.getConcurrencySpecs();
-		ConcurrencySpecs correctedConcurrencySpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(concurrencySpecs);
+		ExecutionSpecs executionSpecs = jobRequest.getExecutionSpecs();
+		ExecutionSpecs correctedExecutionSpecs = ConcurrencyValidator.getCorrectedConcurrencySpecs(executionSpecs);
 
 		HttpRequestSpecs httpRequestSpecs = jobRequest.getHttpRequestSpecs();
 		List<String> payloadKeysToModify = jobRequest.getPayloadKeysToModify();
 
-		return new JobRequest(creatorEmail, correctedConcurrencySpecs, httpRequestSpecs, payloadKeysToModify);
+		return new JobRequest(creatorEmail, correctedExecutionSpecs, httpRequestSpecs, payloadKeysToModify);
 	}
 
 	public String createJobRequest(JobRequest jobRequest) throws UnsupportedJsonNodeException {

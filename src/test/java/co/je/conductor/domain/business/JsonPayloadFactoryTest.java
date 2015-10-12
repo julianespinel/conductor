@@ -22,7 +22,7 @@ public class JsonPayloadFactoryTest {
 		JobRequest jobRequest = JobRequestFactoryForTests.getJobRequest();
 
 		int totalCalls = 10;
-		assertEquals(totalCalls, jobRequest.getConcurrencySpecs().getTotalCalls());
+		assertEquals(totalCalls, jobRequest.getExecutionSpecs().getTotalCalls());
 
 		int numberOfPayloadKeysToModify = 4;
 		List<String> payloadKeysToModify = jobRequest.getPayloadKeysToModify();
