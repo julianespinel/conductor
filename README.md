@@ -23,9 +23,9 @@ In order to execute a load test, you should define a job request. A job request 
 ```json 
 {
     "creatorEmail": "yourname@domain.com",
-    "concurrencySpecs": {
+    "executionSpecs": {
         "totalCalls": 10,
-        "concurrentCalls": 5
+        "parallelCalls": 5
     },
     "httpRequestSpecs": {
         "httpMethod": "POST",
@@ -55,14 +55,14 @@ As you can see a JobRequest is composed of 4 main parts:
 
 	Is the email where the load test results will be sent.
 
-2. concurrencySpecs
+2. executionSpecs
 
-	Defines the concurrecy specifications of the load test. You have to define 2 things here: the total number of HTTP calls you want Conductor to execute, and how many of them should be executed at the same time.
+	Defines the execution specifications of the load test. You have to define 2 things here: the total number of HTTP calls you want Conductor to execute, and how many of them should be executed at the same time.
     
-    In this example we wanted to execute 10 HTTP requests but in sets of 5 concurrent calls. It means that the hole test will be executed in two rounds:
+    In this example we wanted to execute 10 HTTP requests but in sets of 5 parallel calls. It means that the load test will be executed in two rounds:
     
-    1. Round 1: 5 concurrent calls
-    1. Round 2: 5 concurrent calls.
+    1. Round 1: 5 parallel calls
+    1. Round 2: 5 parallel calls.
        
 1. httpRequestSpecs
 
@@ -161,9 +161,9 @@ Payload:
 ```json
 {
     "creatorEmail": "julianespinel@gmail.com",
-    "concurrencySpecs": {
+    "executionSpecs": {
         "totalCalls": 10,
-        "concurrentCalls": 5
+        "parallelCalls": 5
     },
     "httpRequestSpecs": {
         "httpMethod": "GET",
@@ -186,9 +186,9 @@ Payload:
 ```json
 {
     "creatorEmail": "julianespinel@gmail.com",
-    "concurrencySpecs": {
+    "executionSpecs": {
         "totalCalls": 10,
-        "concurrentCalls": 5
+        "parallelCalls": 5
     },
     "httpRequestSpecs": {
         "httpMethod": "POST",
