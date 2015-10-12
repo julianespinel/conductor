@@ -1,6 +1,9 @@
 package co.je.conductor.domain.business;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import co.je.conductor.domain.entities.ExecutionSpecs;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
@@ -46,7 +49,8 @@ public class JobBusiness {
 		correctedJobRequest = new JobRequest(jobRequestId, correctedJobRequest);
 		List<String> generatedPayloads = JsonPayloadFactory.generatePayloadList(correctedJobRequest);
 		JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, generatedPayloads);
-		jobExecutor.run();
+		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+		singleThreadExecutor.submit(jobExecutor);
 
 		return jobRequestId;
 	}
