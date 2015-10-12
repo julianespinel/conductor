@@ -27,8 +27,12 @@ import org.eclipse.jetty.http.HttpMethod;
 
 import co.je.conductor.domain.entities.HTTPConductorResponse;
 import co.je.conductor.domain.entities.HttpRequestSpecs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobExecutorWorker.class);
 
 	public static final int TIMEOUT_IN_MILLISECONDS = 5000;
 
@@ -44,7 +48,6 @@ public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 
 		this.httpRequestSpecs = httpRequestSpecs;
 		this.payload = payload;
-
 		httpClient = HttpClients.createDefault();
 	}
 
@@ -78,15 +81,7 @@ public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 		httpRequest.setEntity(payloadEntity);
 	}
 
-	@Override
-	public HTTPConductorResponse call() throws Exception {
-
-		HttpResponse result = null;
-		
-		long initialTime = Instant.now().toEpochMilli();
-
-		String httpMethod = httpRequestSpecs.getHttpMethod();
-		String url = httpRequestSpecs.getUrl();
+	private HttpUriRequest getHttpUriRequest(String httpMethod, String url) throws Exception {
 
 		HttpUriRequest httpRequest = null;
 
@@ -126,33 +121,42 @@ public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 
 		} else {
 
-			String message = "The method: " + httpMethod + " is not currently supported by Conductor. "
-					+ "We suport the following methods: GET, POST, PUT, DELETE.";
-
+			String message = "The method: " + httpMethod + " is not currently supported by Conductor. We suport the following methods: GET, POST, PUT, DELETE.";
 			throw new Exception(message);
 		}
+		return httpRequest;
+	}
 
-		CloseableHttpResponse httpResponse = httpClient.execute(httpRequest);
+	@Override
+	public HTTPConductorResponse call() throws Exception {
+
+		CloseableHttpClient httpClient = null;
+		CloseableHttpResponse httpResponse = null;
+
+		long initialTime = Instant.now().toEpochMilli();
+		String httpMethod = httpRequestSpecs.getHttpMethod();
+		String url = httpRequestSpecs.getUrl();
+		HttpUriRequest httpRequest = getHttpUriRequest(httpMethod, url);
 
 		try {
 
+			httpResponse = httpClient.execute(httpRequest);
 			HttpEntity entityResponse = httpResponse.getEntity();
 			EntityUtils.consume(entityResponse);
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+            LOGGER.error("call", e);
 
 		} finally {
 
 			httpResponse.close();
-			result = httpResponse;
 			httpClient.close();
 		}
 		
 		long finalTime = Instant.now().toEpochMilli();
 		long requestDurationInMilliseconds = finalTime - initialTime;
 		
-		return new HTTPConductorResponse(result, requestDurationInMilliseconds);
+		return new HTTPConductorResponse(httpResponse, requestDurationInMilliseconds);
 	}
 }
