@@ -21,4 +21,4 @@ logging:
       archivedFileCount: 5
 
 mongoDBConfig:
-  dbName: conductor_db
+  dbName: conductordb
