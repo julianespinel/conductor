@@ -61,7 +61,7 @@ As you can see a JobRequest is composed of 4 main parts:
     
     In this example we wanted to execute 10 HTTP requests but in sets of 5 parallel calls. It means that the load test will be executed in two rounds:
     
-    1. Round 1: 5 parallel calls
+    1. Round 1: 5 parallel calls.
     1. Round 2: 5 parallel calls.
        
 1. httpRequestSpecs
@@ -77,7 +77,7 @@ As you can see a JobRequest is composed of 4 main parts:
 
 1. payloadKeysToModify
 
-	If we are testing a service that creates an object into a DB (for example), we can't send the same payload in each HTTP request because probably the service will tell us that the object is already created. For this reason is imporant that Conductor generates a different HTTP payload for each request. How do we tell Conductor to do it?
+	If we are testing a service that creates an object into a DB (for example), we can't send the same payload in each HTTP request because probably the service will tell us that the object is already created. For this reason it is important that Conductor generates a different HTTP payload for each request. How do we tell Conductor to do that?
 	
     In "payloadKeysToModify" we should define an array that references the keys of the "httpPayload" we want to change on each request. In the example above the array was: 
     
@@ -138,9 +138,9 @@ As you can see a JobRequest is composed of 4 main parts:
 
 ## API
 
-We offer an API with one REST service to create load tests. We will evolve this API in further versions in order to be able to automate load tests creation, management and reporting.
+We offer an API to create load tests. We will evolve this API in further versions in order to be able to automate load tests creation, management and reporting.
 
-1. Create job request
+### 1. Create job request
 
 <pre>
 HTTP method: POST
@@ -148,9 +148,9 @@ URL:  http://localhost:9001/conductor/api/jobs
 Payload: job request json
 </pre>
 
-### Examples
+#### Examples
 
-#### GET and DELETE requests
+##### GET and DELETE requests
 
 <pre>
 HTTP method: POST
@@ -175,7 +175,7 @@ Payload:
 }
 ```
 
-#### POST and PUT requests
+##### POST and PUT requests
 
 <pre>
 HTTP method: POST
