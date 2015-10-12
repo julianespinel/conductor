@@ -12,9 +12,21 @@ The main objective of Conductor is to execute load tests against REST APIs.
 
 1. `git clone https://github.com/julianespinel/conductor.git`
 1. `cd conductor/scripts`
-1. `sh build-and-run.sh` (It will start a new process using the port 9001)
+1. `sh build.sh` 
+1. `sh start.sh` (It will start a new process using the port 9001)
 1. Make a GET request to: `http://localhost:9001/conductor/admin/ping`
 1. If you get `pong` as response then Conductor is up and running
+
+### Change the default port
+
+1. `cd conductor`
+1. `vim conductor-develop.yml`
+1. Change 9001 by the the port you want to use.
+
+### Stop Conductor
+
+1. `cd conductor/scripts`
+1. `sh stop.sh` 
 
 ## How to use
 
