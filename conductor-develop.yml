@@ -11,11 +11,9 @@ logging:
   appenders:
     - type: console
       timeZone: UTC
-      threshold: WARN
       target: stdout
     - type: file
       timeZone: UTC
-      threshold: INFO
       currentLogFilename: ./logs/conductor.log
       archivedLogFilenamePattern: ./logs/conductor-%d.log
       archivedFileCount: 5
