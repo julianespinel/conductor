@@ -76,9 +76,7 @@ public class JobExecutor implements Runnable {
 
             try {
                 httpConductorResponseList.add(future.get());
-
             } catch (Exception e) {
-
                 LOGGER.error("resolveFutures", e);
             }
         }
@@ -89,15 +87,12 @@ public class JobExecutor implements Runnable {
     @Override
     public void run() {
 
-        LOGGER.info("running jobRequest: " + jobRequest.getId());
-
         ExecutionSpecs executionSpecs = jobRequest.getExecutionSpecs();
-
         int totalCalls = executionSpecs.getTotalCalls();
-        int concurrentCalls = executionSpecs.getParallelCalls();
-        ExecutorService threadPool = Executors.newFixedThreadPool(concurrentCalls);
+        int parallelCalls = executionSpecs.getParallelCalls();
+        ExecutorService threadPool = Executors.newFixedThreadPool(parallelCalls);
 
-        LOGGER.info("threadPool created, size: " + concurrentCalls);
+        LOGGER.info("start jobRequest: " + jobRequest.getId() + ", pool size: " + parallelCalls);
 
         try {
 
@@ -122,5 +117,7 @@ public class JobExecutor implements Runnable {
 
             threadPool.shutdown();
         }
+
+        LOGGER.info("end jobRequest: " + jobRequest.getId());
     }
 }
