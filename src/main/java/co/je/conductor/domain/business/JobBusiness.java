@@ -45,12 +45,13 @@ public class JobBusiness {
 
 		JobRequest correctedJobRequest = getCorrectedJobRequest(jobRequest);
 		String jobRequestId = jobRequestDAO.createJobRequest(mongoDB, correctedJobRequest);
-		
 		correctedJobRequest = new JobRequest(jobRequestId, correctedJobRequest);
+
 		List<String> generatedPayloads = JsonPayloadFactory.generatePayloadList(correctedJobRequest);
 		JobExecutor jobExecutor = new JobExecutor(mongoDB, jobResultDAO, correctedJobRequest, generatedPayloads);
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		singleThreadExecutor.submit(jobExecutor);
+		singleThreadExecutor.shutdown();
 
 		return jobRequestId;
 	}
