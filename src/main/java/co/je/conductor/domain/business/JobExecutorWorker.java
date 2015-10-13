@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
@@ -41,7 +42,6 @@ public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 
 	private final HttpRequestSpecs httpRequestSpecs;
 	private final String payload;
-
 	private final CloseableHttpClient httpClient;
 
 	public JobExecutorWorker(HttpRequestSpecs httpRequestSpecs, String payload) {
@@ -85,58 +85,61 @@ public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 
 		HttpUriRequest httpRequest = null;
 
-		if (httpMethod.equalsIgnoreCase(HttpMethod.GET.name())) {
 
-			HttpGet getRequest = new HttpGet(url);
-			getRequest.setConfig(REQUEST_CONFIG);
-			addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, getRequest);
+        if (httpMethod.equalsIgnoreCase(HttpMethod.GET.name())) {
 
-			httpRequest = getRequest;
+            HttpGet getRequest = new HttpGet(url);
+            getRequest.setConfig(REQUEST_CONFIG);
+            addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, getRequest);
 
-		} else if (httpMethod.equalsIgnoreCase(HttpMethod.POST.name())) {
+            httpRequest = getRequest;
 
-			HttpPost postRequest = new HttpPost(url);
-			postRequest.setConfig(REQUEST_CONFIG);
-			addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, postRequest);
-			addPayload(postRequest);
+        } else if (httpMethod.equalsIgnoreCase(HttpMethod.POST.name())) {
 
-			httpRequest = postRequest;
+            HttpPost postRequest = new HttpPost(url);
+            postRequest.setConfig(REQUEST_CONFIG);
+            addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, postRequest);
+            addPayload(postRequest);
 
-		} else if (httpMethod.equalsIgnoreCase(HttpMethod.PUT.name())) {
+            httpRequest = postRequest;
 
-			HttpPut putRequest = new HttpPut(url);
-			putRequest.setConfig(REQUEST_CONFIG);
-			addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, putRequest);
-			addPayload(putRequest);
+        } else if (httpMethod.equalsIgnoreCase(HttpMethod.PUT.name())) {
 
-			httpRequest = putRequest;
+            HttpPut putRequest = new HttpPut(url);
+            putRequest.setConfig(REQUEST_CONFIG);
+            addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, putRequest);
+            addPayload(putRequest);
 
-		} else if (httpMethod.equalsIgnoreCase(HttpMethod.DELETE.name())) {
+            httpRequest = putRequest;
 
-			HttpDelete deleteRequest = new HttpDelete(url);
-			deleteRequest.setConfig(REQUEST_CONFIG);
-			addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, deleteRequest);
+        } else if (httpMethod.equalsIgnoreCase(HttpMethod.DELETE.name())) {
 
-			httpRequest = deleteRequest;
+            HttpDelete deleteRequest = new HttpDelete(url);
+            deleteRequest.setConfig(REQUEST_CONFIG);
+            addConnectionTimeoutsAndHttpHeaders(REQUEST_CONFIG, deleteRequest);
 
-		} else {
+            httpRequest = deleteRequest;
 
-			String message = "The method: " + httpMethod + " is not currently supported by Conductor. We suport the following methods: GET, POST, PUT, DELETE.";
-			throw new Exception(message);
-		}
-		return httpRequest;
+        } else {
+
+            String message = "The method: " + httpMethod + " is not currently supported by Conductor. We suport the following methods: GET, POST, PUT, DELETE.";
+            throw new Exception(message);
+        }
+
+        return httpRequest;
 	}
 
 	@Override
 	public HTTPConductorResponse call() throws Exception {
 
-		CloseableHttpClient httpClient = null;
 		CloseableHttpResponse httpResponse = null;
 
 		long initialTime = Instant.now().toEpochMilli();
 		String httpMethod = httpRequestSpecs.getHttpMethod();
 		String url = httpRequestSpecs.getUrl();
 		HttpUriRequest httpRequest = getHttpUriRequest(httpMethod, url);
+
+        LOGGER.info("call: " + httpRequestSpecs.getHttpMethod() + " " + httpRequestSpecs.getUrl());
 
 		try {
 
@@ -150,8 +153,8 @@ public class JobExecutorWorker implements Callable<HTTPConductorResponse> {
 
 		} finally {
 
-			httpResponse.close();
-			httpClient.close();
+            IOUtils.closeQuietly(httpClient);
+            IOUtils.closeQuietly(httpResponse);
 		}
 		
 		long finalTime = Instant.now().toEpochMilli();
