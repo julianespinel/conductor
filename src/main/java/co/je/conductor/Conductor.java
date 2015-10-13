@@ -1,5 +1,8 @@
 package co.je.conductor;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import io.dropwizard.Application;
 import io.dropwizard.java8.Java8Bundle;
 import io.dropwizard.setup.Bootstrap;
@@ -42,6 +45,19 @@ public class Conductor extends Application<ConductorConfig> {
         filter.setInitParameter("allowCredentials", "true");
     }
 
+    public static ObjectMapper configureJackson(ObjectMapper objectMapper) {
+
+        objectMapper.registerModule(new JodaModule());
+        objectMapper.setDateFormat(new ISO8601DateFormat());
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        objectMapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
+        objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        return objectMapper;
+    }
+
     private JobRequestResource getJobRequestResource(DB mongoDB, ObjectMapper objectMapper) {
 
         JobRequestDAO jobRequestDAO = new JobRequestDAO(objectMapper);
@@ -56,27 +72,23 @@ public class Conductor extends Application<ConductorConfig> {
 
         // add CORS support
         addCORSSupport(environment);
-        
-        environment.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        ObjectMapper objectMapper = environment.getObjectMapper();
+        configureJackson(objectMapper);
 
+        // MongoDB
         MongoClient mongoClient = new MongoClient();
         DB mongoDB = mongoClient.getDB(conductorConfig.getMongoDBConfig().getDbName());
 
-        ObjectMapper objectMapper = environment.getObjectMapper();
         JobRequestResource jobRequestResource = getJobRequestResource(mongoDB, objectMapper);
-
         environment.jersey().register(jobRequestResource);
     }
 
     public static void main(String[] args) {
 
         try {
-
             Conductor conductor = new Conductor();
             conductor.run(args);
-
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }
