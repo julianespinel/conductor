@@ -223,3 +223,7 @@ Payload:
     ]
 }
 ```
+
+## License
+
+This project is under the MIT License. See the [LICENSE](https://github.com/julianespinel/conductor/blob/master/LICENSE) file for the full license text.
